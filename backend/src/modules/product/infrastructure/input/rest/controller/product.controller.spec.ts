@@ -1,9 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductController } from './product.controller';
-import { ProductHandler } from '../../../../application/handler/product.handler';
 import { ProductExceptionHandler } from '../exceptionhandler/product.exception.handler';
-import { GetProductResponse } from '../../../../application/dto/response/get.product.response';
-import { generateProducts } from '../../../../domain/seed/product.seed';
+import { GetProductResponse } from '@/product/application/dto/response/get.product.response';
+import { generateProducts } from '@/product/domain/seed/product.seed';
+import { ProductHandler } from '@/product/application/handler/product.handler';
 
 describe('ProductController', () => {
   let productController: ProductController;

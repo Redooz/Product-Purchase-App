@@ -8,7 +8,10 @@ const config: Config.InitialOptions = {
     '^.+\\.ts$': 'ts-jest',
   },
   collectCoverageFrom: ['src/modules/**/*.ts'],
-  coveragePathIgnorePatterns: ['.*\\.module\\.ts$'],
+  coveragePathIgnorePatterns: [
+    '.*\\.module\\.ts$',
+    '/src/modules/.*/(model|entity|dto|decorator)/',
+  ],
   coverageDirectory: 'coverage',
   testEnvironment: 'node',
   testPathIgnorePatterns: [
@@ -17,7 +20,15 @@ const config: Config.InitialOptions = {
     '/src/migrations/',
     '/src/integration-tests/',
     '/src/e2e-tests/',
+    '/src/modules/.*/(model|entity|dto)/',
   ],
+  moduleNameMapper: {
+    '^@/src/(.*)$': '<rootDir>/src/$1',
+    '^@/modules/(.*)$': '<rootDir>/src/modules/$1',
+    '^@/auth/(.*)$': '<rootDir>/src/modules/auth/$1',
+    '^@/product/(.*)$': '<rootDir>/src/modules/product/$1',
+    '^@/customer/(.*)$': '<rootDir>/src/modules/customer/$1',
+  },
 };
 
 export default config;
