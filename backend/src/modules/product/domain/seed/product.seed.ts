@@ -1,7 +1,7 @@
 import { Product } from '../model/product';
 import { faker } from '@faker-js/faker';
 
-function generateProducts(count: number): Product[] {
+export function generateProducts(count: number): Product[] {
   const products: Product[] = [];
   for (let i = 0; i < count; i++) {
     products.push({

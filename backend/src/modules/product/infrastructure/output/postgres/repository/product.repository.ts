@@ -5,7 +5,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ProductRepository {
-  constructor(@InjectRepository(ProductEntity) private readonly repository: Repository<ProductEntity>) {}
+  constructor(
+    @InjectRepository(ProductEntity)
+    private readonly repository: Repository<ProductEntity>,
+  ) {}
 
   async getProducts(): Promise<ProductEntity[]> {
     return await this.repository.find();
