@@ -18,6 +18,13 @@ const config: Config.InitialOptions = {
     '/src/integration-tests/',
     '/src/e2e-tests/',
   ],
+  moduleNameMapper: {
+    '^@/src/(.*)$': '<rootDir>/src/$1',
+    '^@/modules/(.*)$': '<rootDir>/src/modules/$1',
+    '^@/auth/(.*)$': '<rootDir>/src/modules/auth/$1',
+    '^@/product/(.*)$': '<rootDir>/src/modules/product/$1',
+    '^@/customer/(.*)$': '<rootDir>/src/modules/customer/$1',
+  },
 };
 
 export default config;

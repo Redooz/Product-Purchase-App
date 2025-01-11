@@ -1,7 +1,7 @@
-import { ProductPersistencePort } from '../../../../domain/spi/product.persistence.port';
+import { ProductPersistencePort } from '@/product/domain/spi/product.persistence.port';
 import { Injectable } from '@nestjs/common';
 import { ProductRepository } from '../repository/product.repository';
-import { Product } from '../../../../domain/model/product';
+import { Product } from '@/product/domain/model/product';
 import { ProductEntity } from '../entity/product.entity';
 
 @Injectable()

@@ -1,5 +1,5 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
-import { ProductNotFoundError } from '../../../../domain/exception/product.not.found.error';
+import { ProductNotFoundError } from '@/product/domain/exception/product.not.found.error';
 
 @Injectable()
 export class ProductExceptionHandler {
