@@ -28,5 +28,6 @@ import { ProductExceptionHandler } from './infrastructure/input/rest/exceptionha
       useExisting: ProductPersistenceAdapter,
     },
   ],
+  exports: [ProductServicePort],
 })
 export class ProductModule {}

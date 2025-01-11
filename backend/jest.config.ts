@@ -9,7 +9,7 @@ const config: Config.InitialOptions = {
   },
   collectCoverageFrom: ['src/modules/**/*.ts'],
   coveragePathIgnorePatterns: [
-    '.*\\.module\\.ts$',
+    '.*\\.model\\.ts$',
     '/src/modules/.*/(model|entity|dto|decorator)/',
   ],
   coverageDirectory: 'coverage',
@@ -28,6 +28,7 @@ const config: Config.InitialOptions = {
     '^@/auth/(.*)$': '<rootDir>/src/modules/auth/$1',
     '^@/product/(.*)$': '<rootDir>/src/modules/product/$1',
     '^@/customer/(.*)$': '<rootDir>/src/modules/customer/$1',
+    '^@/transaction/(.*)$': '<rootDir>/src/modules/transaction/$1',
   },
 };
 

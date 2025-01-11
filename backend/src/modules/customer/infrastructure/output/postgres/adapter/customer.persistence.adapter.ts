@@ -16,4 +16,14 @@ export class CustomerPersistenceAdapter extends CustomerPersistencePort {
   override async getCustomerByEmail(email: string): Promise<Customer> {
     return await this.customerRepository.getCustomerByEmail(email);
   }
+
+  override async getCustomerById(id: number): Promise<Customer | null> {
+    const customer = await this.customerRepository.getCustomerById(id);
+
+    if (!customer) {
+      return null;
+    }
+
+    return customer;
+  }
 }
