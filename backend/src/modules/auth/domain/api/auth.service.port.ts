@@ -1,5 +1,5 @@
-import { SignupRequest } from '@/auth/application/dtos/request/signup.request';
-import { LoginResponse } from '@/auth/application/dtos/response/login.response';
+import { SignupRequest } from '@/auth/application/dto/request/signup.request';
+import { LoginResponse } from '@/auth/application/dto/response/login.response';
 import { Customer } from '@/customer/domain/model/customer';
 
 export abstract class AuthServicePort {

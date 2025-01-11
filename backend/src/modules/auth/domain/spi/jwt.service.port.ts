@@ -1,4 +1,4 @@
-import { PayloadToken } from '@/auth/domain/models/token.model';
+import { PayloadToken } from '@/auth/domain/model/token.model';
 
 export abstract class JwtServicePort {
   abstract sign(payload: PayloadToken): string;

@@ -9,11 +9,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthHandler } from '@/auth/application/handler/auth.handler';
-import { SignupRequest } from '@/auth/application/dtos/request/signup.request';
+import { SignupRequest } from '@/auth/application/dto/request/signup.request';
 import { AuthGuard } from '@nestjs/passport';
-import { LoginRequest } from '@/auth/application/dtos/request/login.request';
+import { LoginRequest } from '@/auth/application/dto/request/login.request';
 import { Request } from 'express';
-import { LoginResponse } from '@/auth/application/dtos/response/login.response';
+import { LoginResponse } from '@/auth/application/dto/response/login.response';
 import { AuthExceptionHandler } from '@/auth/infrastructure/input/rest/exceptionhandler/auth.exception.handler';
 
 @ApiTags('auth')

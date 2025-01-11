@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProductHandler } from '@/product/application/handler/product.handler';
 import { GetProductResponse } from '@/product/application/dto/response/get.product.response';
 import { ProductExceptionHandler } from '../exceptionhandler/product.exception.handler';
-import { JwtAuthGuard } from '@/auth/infrastructure/external/guards/jwt.guard';
+import { JwtAuthGuard } from '@/auth/infrastructure/external/guard/jwt.guard';
 
 @ApiTags('products')
 @UseGuards(JwtAuthGuard)

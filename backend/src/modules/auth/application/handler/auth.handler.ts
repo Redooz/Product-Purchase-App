@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { AuthServicePort } from '@/auth/domain/api/auth.service.port';
 import { Customer } from '@/customer/domain/model/customer';
 import { Request } from 'express';
-import { LoginResponse } from '@/auth/application/dtos/response/login.response';
-import { SignupRequest } from '@/auth/application/dtos/request/signup.request';
+import { LoginResponse } from '@/auth/application/dto/response/login.response';
+import { SignupRequest } from '@/auth/application/dto/request/signup.request';
 
 @Injectable()
 export class AuthHandler {

@@ -1,10 +1,10 @@
 import { AuthServicePort } from '@/auth/domain/api/auth.service.port';
-import { LoginResponse } from '@/auth/application/dtos/response/login.response';
-import { SignupRequest } from '@/auth/application/dtos/request/signup.request';
+import { LoginResponse } from '@/auth/application/dto/response/login.response';
+import { SignupRequest } from '@/auth/application/dto/request/signup.request';
 import { JwtServicePort } from '@/auth/domain/spi/jwt.service.port';
 import { CustomerServicePort } from '@/customer/domain/api/customer.service.port';
 import { Customer } from '@/customer/domain/model/customer';
-import { PayloadToken } from '@/auth/domain/models/token.model';
+import { PayloadToken } from '@/auth/domain/model/token.model';
 import { compare, hash } from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 

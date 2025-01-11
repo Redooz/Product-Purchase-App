@@ -1,5 +1,5 @@
 import { JwtServicePort } from '@/auth/domain/spi/jwt.service.port';
-import { PayloadToken } from '@/auth/domain/models/token.model';
+import { PayloadToken } from '@/auth/domain/model/token.model';
 import { JwtService } from '@nestjs/jwt';
 import { Injectable } from '@nestjs/common';
 

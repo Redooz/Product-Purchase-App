@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, Logger } from '@nestjs/common';
 import { CustomerAlreadyExistsError } from '@/customer/domain/exception/customer.already.exists.error';
 
 @Injectable()
