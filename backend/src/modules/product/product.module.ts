@@ -7,15 +7,18 @@ import { ProductPersistenceAdapter } from './infrastructure/output/postgres/adap
 import { ProductPersistencePort } from './domain/spi/product.persistence.port';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductEntity } from './infrastructure/output/postgres/entity/product.entity';
+import { ProductController } from './infrastructure/input/rest/controller/product.controller';
+import { ProductExceptionHandler } from './infrastructure/input/rest/exceptionhandler/product.exception.handler';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ProductEntity])],
-  controllers: [],
+  controllers: [ProductController],
   providers: [
     ProductUsecase,
     ProductPersistenceAdapter,
     ProductRepository,
     ProductHandler,
+    ProductExceptionHandler,
     {
       provide: ProductServicePort,
       useExisting: ProductUsecase,
