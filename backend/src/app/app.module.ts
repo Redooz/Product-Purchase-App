@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ProductModule } from './modules/product/product.module';
+import { ProductModule } from '../modules/product/product.module';
 import { ConfigModule } from '@nestjs/config';
 import configuration from './config/configuration';
 import { typeOrmConfig } from './config/data.source.options';

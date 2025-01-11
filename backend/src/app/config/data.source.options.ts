@@ -1,6 +1,7 @@
 import * as path from 'path';
 import * as dotenv from 'dotenv';
 import { DataSourceOptions } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 dotenv.config({ path: '.env' });
 
@@ -11,11 +12,13 @@ export const typeOrmConfig: DataSourceOptions = {
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
-  entities: [path.join(__dirname, '..') + '/**/*.entity{.ts,.js}'],
-  migrations: [path.join(__dirname, '..') + '/migrations/**/*{.ts,.js}'],
+  entities: [path.join(__dirname, '../..') + '/**/*.entity{.ts,.js}'],
+  migrations: [path.join(__dirname, '../..') + '/migrations/**/*{.ts,.js}'],
   synchronize: false,
   logging: true,
   extra: {
     options: '-c timezone=America/Bogota',
   },
 };
+
+export const dataSource = new DataSource(typeOrmConfig);
