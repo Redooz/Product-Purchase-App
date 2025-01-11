@@ -1,10 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProductHandler } from '../../../../application/handler/product.handler';
-import { GetProductResponse } from '../../../../application/dto/response/get.product.response';
+import { ProductHandler } from '@/product/application/handler/product.handler';
+import { GetProductResponse } from '@/product/application/dto/response/get.product.response';
 import { ProductExceptionHandler } from '../exceptionhandler/product.exception.handler';
+import { JwtAuthGuard } from '@/auth/infrastructure/external/guards/jwt.guard';
 
 @ApiTags('products')
+@UseGuards(JwtAuthGuard)
 @Controller('products')
 export class ProductController {
   constructor(
