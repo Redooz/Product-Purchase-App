@@ -45,6 +45,9 @@ export class OrderTransactionEntity {
   )
   status: TransactionStatusEntity;
 
+  @Column({ name: 'acceptance_token_end_user_policy' })
+  acceptanceTokenEndUserPolicy: string;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;
 }

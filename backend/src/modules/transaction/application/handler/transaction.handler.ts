@@ -30,10 +30,12 @@ export class TransactionHandler {
         id: loggedCustomer.id,
       },
       delivery: {
+        phoneNumber: startTransactionRequestDto.deliveryInfo.phoneNumber,
         personName: startTransactionRequestDto.deliveryInfo.personName,
         address: startTransactionRequestDto.deliveryInfo.address,
         country: startTransactionRequestDto.deliveryInfo.country,
         city: startTransactionRequestDto.deliveryInfo.city,
+        region: startTransactionRequestDto.deliveryInfo.region,
         postalCode: startTransactionRequestDto.deliveryInfo.postalCode,
       },
     };
@@ -42,11 +44,26 @@ export class TransactionHandler {
       startTransactionModel,
     );
 
+    const acceptanceEndUserPolicy =
+      response.transaction.acceptanceEndUserPolicy;
+    const acceptancePersonalDataAuthorization =
+      response.transaction.acceptancePersonalDataAuthorization;
+
     return {
       id: response.transaction.id,
       total: response.transaction.total,
       status: response.transaction.status.name,
       deliveryFee: response.delivery.fee,
+      endUserPolicy: {
+        acceptanceToken: acceptanceEndUserPolicy.acceptanceToken,
+        type: acceptanceEndUserPolicy.type,
+        permalink: acceptanceEndUserPolicy.permalink,
+      },
+      personalDataAuthorization: {
+        acceptanceToken: acceptancePersonalDataAuthorization.acceptanceToken,
+        type: acceptancePersonalDataAuthorization.type,
+        permalink: acceptancePersonalDataAuthorization.permalink,
+      },
     };
   }
 

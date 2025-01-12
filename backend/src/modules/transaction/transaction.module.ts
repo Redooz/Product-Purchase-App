@@ -15,12 +15,15 @@ import { TransactionStatusRepository } from '@/transaction/infrastructure/output
 import { TransactionStatusPersistencePort } from '@/transaction/domain/spi/transaction.status.persistence.port';
 import { TransactionStatusPersistenceAdapter } from '@/transaction/infrastructure/output/postgres/adapter/transaction.status.persistence.adapter';
 import { DeliveryModule } from '@/modules/delivery/delivery.module';
-import {
-  TransactionExceptionHandler
-} from '@/transaction/infrastructure/input/exceptionhandler/transaction.exception.handler';
+import { TransactionExceptionHandler } from '@/transaction/infrastructure/input/exceptionhandler/transaction.exception.handler';
+import { HttpModule } from '@nestjs/axios';
+import { WompiApiClient } from '@/transaction/infrastructure/external/wompi/api/wompi.api.client';
+import { WompiAcceptanceServiceAdapter } from '@/transaction/infrastructure/external/wompi/adapter/wompi.acceptance.service.adapter';
+import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.service.port';
 
 @Module({
   imports: [
+    HttpModule,
     TypeOrmModule.forFeature([OrderTransactionEntity, TransactionStatusEntity]),
     ProductModule,
     CustomerModule,
@@ -35,6 +38,8 @@ import {
     TransactionHandler,
     TransactionStatusPersistenceAdapter,
     TransactionExceptionHandler,
+    WompiApiClient,
+    WompiAcceptanceServiceAdapter,
     {
       provide: TransactionServicePort,
       useExisting: TransactionUsecase,
@@ -46,6 +51,10 @@ import {
     {
       provide: TransactionStatusPersistencePort,
       useExisting: TransactionStatusPersistenceAdapter,
+    },
+    {
+      provide: AcceptanceServicePort,
+      useClass: WompiAcceptanceServiceAdapter,
     },
   ],
 })

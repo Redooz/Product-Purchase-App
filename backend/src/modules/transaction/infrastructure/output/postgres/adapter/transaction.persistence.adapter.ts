@@ -4,6 +4,7 @@ import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { OrderTransactionEntity } from '@/transaction/infrastructure/output/postgres/entity/order.transaction.entity';
 import { Status } from '@/transaction/domain/model/enum/status';
 import { Injectable } from '@nestjs/common';
+import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
 
 @Injectable()
 export class TransactionPersistenceAdapter extends TransactionPersistencePort {
@@ -17,6 +18,8 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
     transaction: OrderTransaction,
   ): Promise<OrderTransaction> {
     const orderTransactionEntity: OrderTransactionEntity = {
+      acceptanceTokenEndUserPolicy:
+        transaction.acceptanceEndUserPolicy.acceptanceToken,
       customer: transaction.customer,
       product: transaction.product,
       quantity: transaction.quantity,
@@ -34,6 +37,10 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
       );
 
     return {
+      acceptanceEndUserPolicy: {
+        acceptanceToken: savedOrderTransaction.acceptanceTokenEndUserPolicy,
+        type: AcceptanceType.END_USER_POLICY,
+      },
       id: savedOrderTransaction.id,
       customer: savedOrderTransaction.customer,
       product: {
@@ -74,6 +81,8 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
         country: orderTransaction.delivery.country,
         city: orderTransaction.delivery.city,
         postalCode: orderTransaction.delivery.postalCode,
+        region: orderTransaction.delivery.region,
+        phoneNumber: orderTransaction.delivery.phoneNumber,
       },
       product: {
         id: orderTransaction.product.id,

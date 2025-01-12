@@ -10,6 +10,8 @@ import { ProductQuantityNotAvailableError } from '@/transaction/domain/exception
 import { TransactionStatusPersistencePort } from '@/transaction/domain/spi/transaction.status.persistence.port';
 import { DeliveryServicePort } from '@/modules/delivery/domain/api/delivery.service.port';
 import { Delivery } from '@/modules/delivery/domain/model/delivery';
+import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.service.port';
+import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
 
 @Injectable()
 export class TransactionUsecase extends TransactionServicePort {
@@ -17,6 +19,7 @@ export class TransactionUsecase extends TransactionServicePort {
     private readonly productServicePort: ProductServicePort,
     private readonly customerServicePort: CustomerServicePort,
     private readonly deliveryServicePort: DeliveryServicePort,
+    private readonly acceptanceServicePort: AcceptanceServicePort,
     private readonly transactionPersistencePort: TransactionPersistencePort,
     private readonly transactionStatusPersistencePort: TransactionStatusPersistencePort,
   ) {
@@ -56,10 +59,29 @@ export class TransactionUsecase extends TransactionServicePort {
       pendingTransaction.delivery,
     );
 
+    const presignedAcceptances =
+      await this.acceptanceServicePort.getAllPresignedAcceptances();
+
+    const acceptanceEndUserPolicy = presignedAcceptances.find(
+      (acceptance) => acceptance.type === AcceptanceType.END_USER_POLICY,
+    );
+
+    const acceptancePersonalDataAuthorization = presignedAcceptances.find(
+      (acceptance) =>
+        acceptance.type === AcceptanceType.PERSONAL_DATA_AUTHORIZATION,
+    );
+
+    pendingTransaction.acceptanceEndUserPolicy = acceptanceEndUserPolicy;
+
     const transaction =
       await this.transactionPersistencePort.startTransaction(
         pendingTransaction,
       );
+
+    transaction.acceptancePersonalDataAuthorization =
+      acceptancePersonalDataAuthorization;
+    transaction.acceptanceEndUserPolicy.permalink =
+      acceptanceEndUserPolicy.permalink;
 
     return {
       transaction,

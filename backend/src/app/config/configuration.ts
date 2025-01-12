@@ -14,5 +14,11 @@ export default registerAs('config', () => {
       database: process.env.DATABASE_NAME,
     },
     jwtSecret: process.env.JWT_SECRET,
+    wompi: {
+      publicKey: process.env.WOMPI_PUBLIC_KEY,
+      privateKey: process.env.WOMPI_PRIVATE_KEY,
+      integrationKey: process.env.WOMPI_INTEGRATION_KEY,
+      apiUrl: process.env.WOMPI_API_URL,
+    },
   };
 });
