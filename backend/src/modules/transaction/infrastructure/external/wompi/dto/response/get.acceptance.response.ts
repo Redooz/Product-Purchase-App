@@ -1,4 +1,4 @@
-  export interface GetAcceptanceResponse {
+export interface GetAcceptanceResponse {
   data: {
     id: number;
     name: string;
