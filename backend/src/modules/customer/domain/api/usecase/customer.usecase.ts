@@ -28,8 +28,8 @@ export class CustomerUsecase extends CustomerServicePort {
     return await this.customerPersistencePort.getCustomerByEmail(email);
   }
 
-  getCustomerById(id: number): Promise<Customer> {
-    const customer = this.customerPersistencePort.getCustomerById(id);
+  override async getCustomerById(id: number): Promise<Customer> {
+    const customer = await this.customerPersistencePort.getCustomerById(id);
 
     if (!customer) {
       throw new CustomerNotFoundError(id);

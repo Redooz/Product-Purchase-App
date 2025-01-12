@@ -3,6 +3,7 @@ import { CustomerUsecase } from './customer.usecase';
 import { CustomerPersistencePort } from '@/customer/domain/spi/customer.persistence.port';
 import { Customer } from '@/customer/domain/model/customer';
 import { CustomerAlreadyExistsError } from '@/customer/domain/exception/customer.already.exists.error';
+import { CustomerNotFoundError } from '@/customer/domain/exception/customer.not.found.error';
 
 describe('CustomerUsecase', () => {
   let customerUsecase: CustomerUsecase;
@@ -17,6 +18,7 @@ describe('CustomerUsecase', () => {
           useValue: {
             getCustomerByEmail: jest.fn(),
             createCustomer: jest.fn(),
+            getCustomerById: jest.fn(),
           },
         },
       ],
@@ -103,6 +105,40 @@ describe('CustomerUsecase', () => {
     expect(result).toBeNull();
     expect(customerPersistencePort.getCustomerByEmail).toHaveBeenCalledWith(
       email,
+    );
+  });
+
+  it('should return customer by id', async () => {
+    // Arrange
+    const customer: Customer = {
+      id: 1,
+      email: 'test@example.com',
+      password: 'Test User',
+    };
+    jest
+      .spyOn(customerPersistencePort, 'getCustomerById')
+      .mockResolvedValue(customer);
+
+    // Act
+    const result = await customerUsecase.getCustomerById(customer.id);
+
+    // Assert
+    expect(result).toEqual(customer);
+    expect(customerPersistencePort.getCustomerById).toHaveBeenCalledWith(
+      customer.id,
+    );
+  });
+
+  it('should throw an error if customer does not exist by id', async () => {
+    // Arrange
+    const id = 1;
+    jest
+      .spyOn(customerPersistencePort, 'getCustomerById')
+      .mockResolvedValue(null);
+
+    // Act & Assert
+    await expect(customerUsecase.getCustomerById(id)).rejects.toThrow(
+      CustomerNotFoundError,
     );
   });
 });

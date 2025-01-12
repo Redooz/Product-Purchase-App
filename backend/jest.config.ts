@@ -9,7 +9,7 @@ const config: Config.InitialOptions = {
   },
   collectCoverageFrom: ['src/modules/**/*.ts'],
   coveragePathIgnorePatterns: [
-    '.*\\.model\\.ts$',
+    '.*\\.module\\.ts$',
     '/src/modules/.*/(model|entity|dto|decorator)/',
   ],
   coverageDirectory: 'coverage',

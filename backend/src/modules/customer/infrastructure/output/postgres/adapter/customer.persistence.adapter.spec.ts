@@ -16,6 +16,7 @@ describe('CustomerPersistenceAdapter', () => {
           useValue: {
             createCustomer: jest.fn(),
             getCustomerByEmail: jest.fn(),
+            getCustomerById: jest.fn(),
           },
         },
       ],
@@ -64,5 +65,42 @@ describe('CustomerPersistenceAdapter', () => {
     expect(customerRepository.getCustomerByEmail).toHaveBeenCalledWith(
       customer.email,
     );
+  });
+
+  it('should return customer by id', async () => {
+    // Arrange
+    const customer: Customer = {
+      id: 1,
+      email: 'test@example.com',
+      password: 'Test User',
+    };
+
+    jest
+      .spyOn(customerRepository, 'getCustomerById')
+      .mockResolvedValue(customer);
+
+    // Act
+    const result = await customerPersistenceAdapter.getCustomerById(
+      customer.id,
+    );
+
+    // Assert
+    expect(result).toEqual(customer);
+    expect(customerRepository.getCustomerById).toHaveBeenCalledWith(
+      customer.id,
+    );
+  });
+
+  it('should return null when customer is not found by id', async () => {
+    // Arrange
+    const customerId = 1;
+    jest.spyOn(customerRepository, 'getCustomerById').mockResolvedValue(null);
+
+    // Act
+    const result = await customerPersistenceAdapter.getCustomerById(customerId);
+
+    // Assert
+    expect(result).toBeNull();
+    expect(customerRepository.getCustomerById).toHaveBeenCalledWith(customerId);
   });
 });
