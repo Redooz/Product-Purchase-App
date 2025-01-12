@@ -23,7 +23,8 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
       total: transaction.total,
       delivery: transaction.delivery,
       status: {
-        name: transaction.status.status,
+        id: transaction.status.id,
+        name: transaction.status.name,
       },
     };
 
@@ -48,7 +49,7 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
       delivery: savedOrderTransaction.delivery,
       status: {
         id: savedOrderTransaction.status.id,
-        status: savedOrderTransaction.status.name as Status,
+        name: savedOrderTransaction.status.name as Status,
       },
       createdAt: savedOrderTransaction.createdAt,
     };

@@ -5,5 +5,5 @@ export interface Delivery {
   country: string;
   city: string;
   postalCode: string;
-  createdAt?: Date;
+  fee?: number;
 }

@@ -1,7 +1,8 @@
 import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
+import { Delivery } from '@/modules/delivery/domain/model/delivery';
 
 export abstract class TransactionServicePort {
   abstract startTransaction(
     transaction: OrderTransaction,
-  ): Promise<OrderTransaction>;
+  ): Promise<{ transaction: OrderTransaction; delivery: Delivery }>
 }

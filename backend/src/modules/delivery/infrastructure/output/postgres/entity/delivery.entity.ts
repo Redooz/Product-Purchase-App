@@ -19,4 +19,7 @@ export class DeliveryEntity {
 
   @Column()
   postalCode: string;
+
+  @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
+  fee?: number;
 }

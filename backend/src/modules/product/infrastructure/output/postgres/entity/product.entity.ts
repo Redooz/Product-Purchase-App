@@ -6,20 +6,20 @@ export class ProductEntity {
   id?: number;
 
   @Column()
-  name: string;
+  name?: string;
 
   @Column()
-  description: string;
+  description?: string;
 
   @Column({
     type: 'decimal',
     precision: 10,
     scale: 2,
   })
-  price: number;
+  price?: number;
 
   @Column()
-  stock: number;
+  stock?: number;
 
   @Column({ nullable: true })
   image?: string;

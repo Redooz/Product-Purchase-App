@@ -22,15 +22,15 @@ export class OrderTransactionEntity {
 
   @OneToOne(() => ProductEntity)
   @JoinColumn({ name: 'product_id' })
-  product: ProductEntity;
+  product?: ProductEntity;
 
-  @OneToOne(() => CustomerEntity)
+  @ManyToOne(() => CustomerEntity, (customer) => customer.orderTransactions)
   @JoinColumn({ name: 'customer_id' })
   customer: CustomerEntity;
 
-  @OneToOne(() => DeliveryEntity, { cascade: true })
+  @OneToOne(() => DeliveryEntity)
   @JoinColumn({ name: 'delivery_id' })
-  delivery: DeliveryEntity;
+  delivery?: DeliveryEntity;
 
   @Column({
     type: 'decimal',
