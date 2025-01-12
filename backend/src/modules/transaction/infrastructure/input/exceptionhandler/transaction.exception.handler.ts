@@ -25,4 +25,9 @@ export class TransactionExceptionHandler {
         throw error;
     }
   }
+
+  handleGetAllPendingTransactions(error: Error) {
+    Logger.error('Unexpected error', error.stack, ProductExceptionHandler.name);
+    throw error;
+  }
 }

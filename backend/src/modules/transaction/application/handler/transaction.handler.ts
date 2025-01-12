@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { Customer } from '@/customer/domain/model/customer';
 import { PayloadToken } from '@/auth/domain/model/token.model';
+import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
 
 @Injectable()
 export class TransactionHandler {
@@ -47,5 +48,40 @@ export class TransactionHandler {
       status: response.transaction.status.name,
       deliveryFee: response.delivery.fee,
     };
+  }
+
+  async getAllPendingOrderTransactions(
+    request: Request,
+  ): Promise<GetTransactionResponse[]> {
+    const { sub } = request.user as PayloadToken;
+    const response =
+      await this.transactionServicePort.getAllPendingOrderTransactionsByCustomerId(
+        sub,
+      );
+
+    return response.map(
+      (transaction): GetTransactionResponse => ({
+        id: transaction.id,
+        total: transaction.total.toString(),
+        quantity: transaction.quantity,
+        status: {
+          id: transaction.status.id,
+          name: transaction.status.name,
+        },
+        delivery: {
+          id: transaction.delivery.id,
+          personName: transaction.delivery.personName,
+          address: transaction.delivery.address,
+          country: transaction.delivery.country,
+          city: transaction.delivery.city,
+          postalCode: transaction.delivery.postalCode,
+        },
+        product: {
+          id: transaction.product.id,
+          name: transaction.product.name,
+          price: transaction.product.price.toString(),
+        },
+      }),
+    );
   }
 }

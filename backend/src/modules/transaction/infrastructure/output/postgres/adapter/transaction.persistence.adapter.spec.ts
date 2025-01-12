@@ -17,6 +17,7 @@ describe('TransactionPersistenceAdapter', () => {
           provide: OrderTransactionRepository,
           useValue: {
             createOrderTransaction: jest.fn(),
+            getAllPendingOrderTransactionsByCustomerId: jest.fn(),
           },
         },
       ],
@@ -77,5 +78,36 @@ describe('TransactionPersistenceAdapter', () => {
       status: { id: 1, name: Status.PENDING },
       createdAt: orderTransactionEntity.createdAt,
     });
+  });
+
+  it('should get all pending order transactions by customer id successfully', async () => {
+    // Arrange
+    const customerId = 1;
+    const orderTransactionEntity: OrderTransactionEntity = {
+      id: 1,
+      customer: { id: customerId },
+      product: { id: 1 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 1, name: Status.PENDING },
+      createdAt: new Date(),
+    } as OrderTransactionEntity;
+
+    jest
+      .spyOn(
+        orderTransactionRepository,
+        'getAllPendingOrderTransactionsByCustomerId',
+      )
+      .mockResolvedValue([orderTransactionEntity]);
+
+    // Act
+    const result =
+      await transactionPersistenceAdapter.getAllPendingOrderTransactionsByCustomerId(
+        customerId,
+      );
+
+    // Assert
+    expect(result[0].id).toEqual(1);
   });
 });

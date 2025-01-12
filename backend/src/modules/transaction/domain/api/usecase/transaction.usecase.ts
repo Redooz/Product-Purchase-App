@@ -82,4 +82,12 @@ export class TransactionUsecase extends TransactionServicePort {
     // random value between 1 usd and 5 usd
     return Math.floor(Math.random() * 5) + 1;
   }
+
+  override async getAllPendingOrderTransactionsByCustomerId(
+    customerId: number,
+  ): Promise<Partial<OrderTransaction>[]> {
+    return await this.transactionPersistencePort.getAllPendingOrderTransactionsByCustomerId(
+      customerId,
+    );
+  }
 }

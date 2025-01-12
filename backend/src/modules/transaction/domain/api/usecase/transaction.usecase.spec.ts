@@ -45,6 +45,7 @@ describe('TransactionUsecase', () => {
           provide: TransactionPersistencePort,
           useValue: {
             startTransaction: jest.fn(),
+            getAllPendingOrderTransactionsByCustomerId: jest.fn(),
           },
         },
         {
@@ -125,5 +126,40 @@ describe('TransactionUsecase', () => {
     await expect(
       transactionUsecase.startTransaction(pendingTransaction),
     ).rejects.toThrow(ProductQuantityNotAvailableError);
+  });
+
+  it('should get all pending order transactions by customer id', async () => {
+    // Arrange
+    const customerId = 1;
+    const pendingOrderTransactions: Partial<OrderTransaction>[] = [
+      {
+        id: 1,
+        quantity: 2,
+        total: 200,
+        delivery: {
+          id: 1,
+          personName: '',
+          address: '',
+          country: '',
+          city: '',
+          postalCode: '',
+        },
+      },
+    ];
+    jest
+      .spyOn(
+        transactionPersistencePort,
+        'getAllPendingOrderTransactionsByCustomerId',
+      )
+      .mockResolvedValue(pendingOrderTransactions);
+
+    // Act
+    const result =
+      await transactionUsecase.getAllPendingOrderTransactionsByCustomerId(
+        customerId,
+      );
+
+    // Assert
+    expect(result[0].id).toEqual(pendingOrderTransactions[0].id);
   });
 });

@@ -1,43 +1,36 @@
-import {
-  IsInt,
-  IsPositive,
-  IsString,
-  IsNotEmpty,
-  ValidateNested,
-} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsPositive, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 class DeliveryInfo {
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: 'John Doe' })
   personName: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: '123 Main St' })
   address: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: 'USA' })
   country: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: 'New York' })
   city: string;
 
-  @IsString()
-  @IsNotEmpty()
+  @ApiProperty({ example: '10001' })
   postalCode: string;
 }
 
 export class StartTransactionRequest {
+  @ApiProperty({ example: 10 })
   @IsInt()
   @IsPositive()
   quantity: number;
 
+  @ApiProperty({ example: 17 })
   @IsInt()
   @IsPositive()
   productId: number;
 
+  @ApiProperty({ type: DeliveryInfo })
   @ValidateNested()
   @Type(() => DeliveryInfo)
   deliveryInfo: DeliveryInfo;

@@ -12,7 +12,7 @@ describe('TransactionExceptionHandler', () => {
     transactionExceptionHandler = new TransactionExceptionHandler();
   });
 
-  it('should throw BadRequestException for ProductQuantityNotAvailableError', () => {
+  it('should throw BadRequestException for ProductQuantityNotAvailableError in handleStartTransaction', () => {
     // Arrange
     const error = new ProductQuantityNotAvailableError();
 
@@ -22,7 +22,7 @@ describe('TransactionExceptionHandler', () => {
     ).toThrow(BadRequestException);
   });
 
-  it('should throw NotFoundException for CustomerNotFoundError', () => {
+  it('should throw NotFoundException for CustomerNotFoundError in handleStartTransaction', () => {
     // Arrange
     const error = new CustomerNotFoundError(1);
 
@@ -32,7 +32,7 @@ describe('TransactionExceptionHandler', () => {
     ).toThrow(NotFoundException);
   });
 
-  it('should throw NotFoundException for ProductNotFoundError', () => {
+  it('should throw NotFoundException for ProductNotFoundError in handleStartTransaction', () => {
     // Arrange
     const error = new ProductNotFoundError(
       ExceptionConstant.PRODUCT_NOT_FOUND_MESSAGE.replace('{id}', '1'),
@@ -44,7 +44,7 @@ describe('TransactionExceptionHandler', () => {
     ).toThrow(NotFoundException);
   });
 
-  it('should log and rethrow unexpected errors', () => {
+  it('should log and rethrow unexpected errors in handleStartTransaction', () => {
     // Arrange
     const error = new Error('Unexpected error');
     const loggerSpy = jest.spyOn(Logger, 'error').mockImplementation();
@@ -52,6 +52,22 @@ describe('TransactionExceptionHandler', () => {
     // Act and Assert
     expect(() =>
       transactionExceptionHandler.handleStartTransaction(error),
+    ).toThrow(Error);
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'Unexpected error',
+      error.stack,
+      'ProductExceptionHandler',
+    );
+  });
+
+  it('should log and rethrow unexpected errors in handleGetAllPendingTransactions', () => {
+    // Arrange
+    const error = new Error('Unexpected error');
+    const loggerSpy = jest.spyOn(Logger, 'error').mockImplementation();
+
+    // Act and Assert
+    expect(() =>
+      transactionExceptionHandler.handleGetAllPendingTransactions(error),
     ).toThrow(Error);
     expect(loggerSpy).toHaveBeenCalledWith(
       'Unexpected error',

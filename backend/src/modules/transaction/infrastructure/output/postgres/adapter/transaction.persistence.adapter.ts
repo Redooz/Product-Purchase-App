@@ -54,4 +54,36 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
       createdAt: savedOrderTransaction.createdAt,
     };
   }
+
+  override async getAllPendingOrderTransactionsByCustomerId(
+    customerId: number,
+  ): Promise<Partial<OrderTransaction>[]> {
+    const pendingOrderTransactions =
+      await this.orderTransactionRepository.getAllPendingOrderTransactionsByCustomerId(
+        customerId,
+      );
+
+    return pendingOrderTransactions.map((orderTransaction) => ({
+      id: orderTransaction.id,
+      quantity: orderTransaction.quantity,
+      total: orderTransaction.total,
+      delivery: {
+        id: orderTransaction.delivery.id,
+        personName: orderTransaction.delivery.personName,
+        address: orderTransaction.delivery.address,
+        country: orderTransaction.delivery.country,
+        city: orderTransaction.delivery.city,
+        postalCode: orderTransaction.delivery.postalCode,
+      },
+      product: {
+        id: orderTransaction.product.id,
+        name: orderTransaction.product.name,
+        price: orderTransaction.product.price,
+      },
+      status: {
+        id: orderTransaction.status.id,
+        name: orderTransaction.status.name as Status,
+      },
+    }));
+  }
 }

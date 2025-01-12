@@ -7,6 +7,7 @@ import { StartTransactionRequest } from '@/transaction/application/dto/request/s
 import { Request } from 'express';
 import { BadRequestException } from '@nestjs/common';
 import { StartTransactionResponse } from '@/transaction/application/dto/response/start.transaction.response';
+import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
 
 describe('TransactionController', () => {
   let transactionController: TransactionController;
@@ -21,12 +22,14 @@ describe('TransactionController', () => {
           provide: TransactionHandler,
           useValue: {
             startTransaction: jest.fn(),
+            getAllPendingOrderTransactions: jest.fn(),
           },
         },
         {
           provide: TransactionExceptionHandler,
           useValue: {
             handleStartTransaction: jest.fn(),
+            handleGetAllPendingTransactions: jest.fn(),
           },
         },
       ],
@@ -83,7 +86,7 @@ describe('TransactionController', () => {
     );
   });
 
-  it('should handle an exception when an error occurs', async () => {
+  it('should handle an exception when an error occurs starting a transaction', async () => {
     // Arrange
     const req = {} as Request;
     const startTransactionRequest: StartTransactionRequest = {
@@ -109,5 +112,64 @@ describe('TransactionController', () => {
 
     // Assert
     expect(exceptionHandler.handleStartTransaction).toHaveBeenCalled();
+  });
+
+  it('should get all pending transactions successfully', async () => {
+    // Arrange
+    const req = {} as Request;
+    const pendingTransactions: GetTransactionResponse[] = [
+      {
+        id: 12,
+        total: '6314.50',
+        quantity: 10,
+        status: {
+          id: 1,
+          name: 'PENDING',
+        },
+        delivery: {
+          id: 15,
+          personName: 'John Doe',
+          address: '123 Main St',
+          country: 'USA',
+          city: 'New York',
+          postalCode: '10001',
+        },
+        product: {
+          id: 17,
+          name: 'Modern Fresh Chicken',
+          price: '631.35',
+        },
+      },
+    ];
+
+    jest
+      .spyOn(transactionHandler, 'getAllPendingOrderTransactions')
+      .mockResolvedValue(pendingTransactions);
+
+    // Act
+    const result = await transactionController.getAllPendingTransactions(req);
+
+    // Assert
+    expect(result).toEqual(pendingTransactions);
+    expect(
+      transactionHandler.getAllPendingOrderTransactions,
+    ).toHaveBeenCalledWith(req);
+  });
+
+  it('should handle an exception when an error occurs getting all pending transactions', async () => {
+    // Arrange
+    const req = {} as Request;
+
+    jest
+      .spyOn(transactionHandler, 'getAllPendingOrderTransactions')
+      .mockRejectedValue(new BadRequestException('Bad Request'));
+
+    jest.spyOn(exceptionHandler, 'handleGetAllPendingTransactions');
+
+    // Act
+    await transactionController.getAllPendingTransactions(req);
+
+    // Assert
+    expect(exceptionHandler.handleGetAllPendingTransactions).toHaveBeenCalled();
   });
 });

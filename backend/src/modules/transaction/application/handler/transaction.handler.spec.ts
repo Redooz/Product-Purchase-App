@@ -18,6 +18,7 @@ describe('TransactionHandler', () => {
           provide: TransactionServicePort,
           useValue: {
             startTransaction: jest.fn(),
+            getAllPendingOrderTransactionsByCustomerId: jest.fn(),
           },
         },
       ],
@@ -78,5 +79,65 @@ describe('TransactionHandler', () => {
 
     // Assert
     expect(result).toEqual(startTransactionResponse);
+  });
+
+  it('should get all pending order transactions successfully', async () => {
+    // Arrange
+    const request = {
+      user: { sub: 1 },
+    } as unknown as Request;
+    const getTransactionResponse = [
+      {
+        id: 1,
+        total: '205',
+        quantity: 2,
+        status: {
+          id: 1,
+          name: Status.PENDING,
+        },
+        delivery: {
+          id: 1,
+          personName: 'John Doe',
+          address: '123 Main St',
+          country: 'USA',
+          city: 'New York',
+          postalCode: '10001',
+        },
+      },
+    ];
+
+    jest
+      .spyOn(
+        transactionServicePort,
+        'getAllPendingOrderTransactionsByCustomerId',
+      )
+      .mockResolvedValue([
+        {
+          id: 1,
+          total: 205,
+          quantity: 2,
+          status: { id: 1, name: Status.PENDING },
+          delivery: {
+            id: 1,
+            personName: 'John Doe',
+            address: '123 Main St',
+            country: 'USA',
+            city: 'New York',
+            postalCode: '10001',
+          },
+          product: {
+            id: 1,
+            name: 'Product 1',
+            price: 100,
+          },
+        },
+      ]);
+
+    // Act
+    const result =
+      await transactionHandler.getAllPendingOrderTransactions(request);
+
+    // Assert
+    expect(result[0].id).toEqual(getTransactionResponse[0].id);
   });
 });
