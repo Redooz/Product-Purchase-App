@@ -39,7 +39,19 @@ describe('ProductController', () => {
   it('should return products when products exist', async () => {
     // Arrange
     const products = generateProducts(5);
-    jest.spyOn(productHandler, 'getProducts').mockResolvedValue(products);
+    const productsResponse = products.map(
+      (product): GetProductResponse => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        stock: product.stock,
+        image: product.image,
+        description: product.description,
+      }),
+    );
+    jest
+      .spyOn(productHandler, 'getProducts')
+      .mockResolvedValue(productsResponse);
 
     // Act
     const result = await productController.getProducts();

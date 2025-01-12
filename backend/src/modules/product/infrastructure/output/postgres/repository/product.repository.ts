@@ -17,4 +17,8 @@ export class ProductRepository {
   async createProducts(products: ProductEntity[]): Promise<void> {
     await this.repository.save(products);
   }
+
+  async getProductById(id: number): Promise<ProductEntity> {
+    return await this.repository.findOne({ where: { id } });
+  }
 }

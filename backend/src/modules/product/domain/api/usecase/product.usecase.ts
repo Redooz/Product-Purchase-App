@@ -33,4 +33,19 @@ export class ProductUsecase extends ProductServicePort {
 
     return Promise.resolve();
   }
+
+  override async getProductById(id: number): Promise<Product> {
+    const product = await this.productPersistencePort.getProductById(id);
+
+    if (!product) {
+      throw new ProductNotFoundError(
+        ExceptionConstant.PRODUCT_NOT_FOUND_MESSAGE.replace(
+          '{id}',
+          id.toString(),
+        ),
+      );
+    }
+
+    return product;
+  }
 }

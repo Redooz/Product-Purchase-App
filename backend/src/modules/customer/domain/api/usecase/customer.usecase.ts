@@ -3,6 +3,7 @@ import { CustomerServicePort } from '@/customer/domain/api/customer.service.port
 import { CustomerPersistencePort } from '@/customer/domain/spi/customer.persistence.port';
 import { Customer } from '@/customer/domain/model/customer';
 import { CustomerAlreadyExistsError } from '@/customer/domain/exception/customer.already.exists.error';
+import { CustomerNotFoundError } from '@/customer/domain/exception/customer.not.found.error';
 
 @Injectable()
 export class CustomerUsecase extends CustomerServicePort {
@@ -25,5 +26,15 @@ export class CustomerUsecase extends CustomerServicePort {
 
   override async getCustomerByEmail(email: string): Promise<Customer> {
     return await this.customerPersistencePort.getCustomerByEmail(email);
+  }
+
+  override async getCustomerById(id: number): Promise<Customer> {
+    const customer = await this.customerPersistencePort.getCustomerById(id);
+
+    if (!customer) {
+      throw new CustomerNotFoundError(id);
+    }
+
+    return customer;
   }
 }

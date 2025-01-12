@@ -4,6 +4,7 @@ import { Customer } from '@/customer/domain/model/customer';
 import { Request } from 'express';
 import { LoginResponse } from '@/auth/application/dto/response/login.response';
 import { SignupRequest } from '@/auth/application/dto/request/signup.request';
+import { PayloadToken } from '@/auth/domain/model/token.model';
 
 @Injectable()
 export class AuthHandler {
@@ -14,7 +15,6 @@ export class AuthHandler {
   }
 
   async login(req: Request): Promise<LoginResponse> {
-    const customer = req.user as Customer;
-    return this.authServicePort.generateJwt(customer);
+    return this.authServicePort.generateJwt(req.user as Customer);
   }
 }

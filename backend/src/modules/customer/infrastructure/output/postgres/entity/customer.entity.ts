@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderTransactionEntity } from '@/transaction/infrastructure/output/postgres/entity/order.transaction.entity';
 
 @Entity({ name: 'customers' })
 export class CustomerEntity {
@@ -8,8 +9,14 @@ export class CustomerEntity {
   @Column({
     unique: true,
   })
-  email: string;
+  email?: string;
 
   @Column()
-  password: string;
+  password?: string;
+
+  @OneToMany(
+    () => OrderTransactionEntity,
+    (orderTransaction) => orderTransaction.customer,
+  )
+  orderTransactions?: OrderTransactionEntity[];
 }

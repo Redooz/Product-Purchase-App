@@ -43,4 +43,21 @@ export class ProductPersistenceAdapter extends ProductPersistencePort {
       };
     });
   }
+
+  override async getProductById(id: number): Promise<Product | null> {
+    const productEntity = await this.repository.getProductById(id);
+
+    if (!productEntity) {
+      return null;
+    }
+
+    return {
+      id: productEntity.id,
+      name: productEntity.name,
+      description: productEntity.description,
+      price: productEntity.price,
+      stock: productEntity.stock,
+      image: productEntity.image,
+    };
+  }
 }

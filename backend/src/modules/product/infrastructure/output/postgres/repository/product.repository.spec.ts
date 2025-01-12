@@ -26,20 +26,38 @@ describe('ProductRepository', () => {
   });
 
   it('should return all products', async () => {
+    // Arrange
     const products = [new ProductEntity(), new ProductEntity()];
     jest.spyOn(repository, 'find').mockResolvedValue(products);
 
+    // Act
     const result = await productRepository.getProducts();
 
+    // Assert
     expect(result).toEqual(products);
   });
 
   it('should save products', async () => {
+    // Arrange
     const products = [new ProductEntity(), new ProductEntity()];
     jest.spyOn(repository, 'save').mockResolvedValue(undefined);
 
+    // Act
     await productRepository.createProducts(products);
 
+    // Assert
     expect(repository.save).toHaveBeenCalledWith(products);
+  });
+
+  it('should return a product by id', async () => {
+    // Arrange
+    const product = new ProductEntity();
+    jest.spyOn(repository, 'findOne').mockResolvedValue(product);
+
+    // Act
+    const result = await productRepository.getProductById(1);
+
+    // Assert
+    expect(result).toEqual(product);
   });
 });

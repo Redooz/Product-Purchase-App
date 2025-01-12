@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductPersistenceAdapter } from './product.persistence.adapter';
 import { ProductRepository } from '../repository/product.repository';
-import { Product } from '../../../../domain/model/product';
+import { Product } from '@/product/domain/model/product';
 import { ProductEntity } from '../entity/product.entity';
 
 describe('ProductPersistenceAdapter', () => {
@@ -17,6 +17,7 @@ describe('ProductPersistenceAdapter', () => {
           useValue: {
             createProducts: jest.fn(),
             getProducts: jest.fn(),
+            getProductById: jest.fn(),
           },
         },
       ],
@@ -111,6 +112,46 @@ describe('ProductPersistenceAdapter', () => {
 
     // Act
     const result = await productPersistenceAdapter.getProducts();
+
+    // Assert
+    expect(result).toBeNull();
+  });
+
+  it('should return product when product exists', async () => {
+    // Arrange
+    const productEntity: ProductEntity = {
+      id: 1,
+      name: 'Product 1',
+      description: 'Description 1',
+      price: 100,
+      stock: 10,
+      image: 'image1.jpg',
+    };
+    const product: Product = {
+      id: productEntity.id,
+      name: productEntity.name,
+      description: productEntity.description,
+      price: productEntity.price,
+      stock: productEntity.stock,
+      image: productEntity.image,
+    };
+    jest
+      .spyOn(productRepository, 'getProductById')
+      .mockResolvedValue(productEntity);
+
+    // Act
+    const result = await productPersistenceAdapter.getProductById(1);
+
+    // Assert
+    expect(result).toEqual(product);
+  });
+
+  it('should return null when product does not exist', async () => {
+    // Arrange
+    jest.spyOn(productRepository, 'getProductById').mockResolvedValue(null);
+
+    // Act
+    const result = await productPersistenceAdapter.getProductById(1);
 
     // Assert
     expect(result).toBeNull();

@@ -19,6 +19,7 @@ describe('ProductUsecase', () => {
           useValue: {
             getProducts: jest.fn(),
             createProducts: jest.fn(),
+            getProductById: jest.fn(),
           },
         },
       ],
@@ -92,5 +93,45 @@ describe('ProductUsecase', () => {
 
     // Assert
     expect(productPersistencePort.createProducts).not.toHaveBeenCalled();
+  });
+
+  it('should return product when product exists', async () => {
+    // Arrange
+    const product: Product = {
+      id: 1,
+      name: 'Product 1',
+      description: 'Description 1',
+      price: 10,
+      stock: 5,
+      image: 'image1.jpg',
+    };
+    jest
+      .spyOn(productPersistencePort, 'getProductById')
+      .mockResolvedValue(product);
+
+    // Act
+    const result = await productUsecase.getProductById(1);
+
+    // Assert
+    expect(result).toEqual(product);
+  });
+
+  it('should throw ProductNotFoundError when product does not exist', async () => {
+    // Arrange
+    const id = 1;
+    jest
+      .spyOn(productPersistencePort, 'getProductById')
+      .mockResolvedValue(null);
+
+    // Act & Assert
+    await expect(productUsecase.getProductById(id)).rejects.toThrow(
+      ProductNotFoundError,
+    );
+    await expect(productUsecase.getProductById(id)).rejects.toThrow(
+      ExceptionConstant.PRODUCT_NOT_FOUND_MESSAGE.replace(
+        '{id}',
+        id.toString(),
+      ),
+    );
   });
 });

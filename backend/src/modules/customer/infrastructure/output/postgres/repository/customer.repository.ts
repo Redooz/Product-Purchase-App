@@ -17,4 +17,8 @@ export class CustomerRepository {
   async getCustomerByEmail(email: string): Promise<CustomerEntity> {
     return await this.customerRepository.findOne({ where: { email } });
   }
+
+  async getCustomerById(id: number): Promise<CustomerEntity> {
+    return await this.customerRepository.findOne({ where: { id } });
+  }
 }

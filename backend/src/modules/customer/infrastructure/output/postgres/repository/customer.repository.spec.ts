@@ -60,4 +60,24 @@ describe('CustomerRepository', () => {
       where: { email: customer.email },
     });
   });
+
+  it('should return customer by id', async () => {
+    // Arrange
+    const customer: CustomerEntity = {
+      id: 1,
+      email: 'test@example.com',
+      password: 'Test User',
+    } as CustomerEntity;
+
+    jest.spyOn(repository, 'findOne').mockResolvedValue(customer);
+
+    // Act
+    const result = await customerRepository.getCustomerById(customer.id);
+
+    // Assert
+    expect(result).toEqual(customer);
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: { id: customer.id },
+    });
+  });
 });
