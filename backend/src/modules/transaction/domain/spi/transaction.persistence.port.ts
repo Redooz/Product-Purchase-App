@@ -8,4 +8,11 @@ export abstract class TransactionPersistencePort {
   abstract getAllPendingOrderTransactionsByCustomerId(
     customerId: number,
   ): Promise<Partial<OrderTransaction>[]>;
+
+  abstract getTransactionById(id: number): Promise<OrderTransaction | null>;
+
+  abstract updateOrderTransaction(
+    id: number,
+    orderTransaction: Partial<OrderTransaction>,
+  ): Promise<OrderTransaction>;
 }

@@ -20,6 +20,7 @@ describe('ProductUsecase', () => {
             getProducts: jest.fn(),
             createProducts: jest.fn(),
             getProductById: jest.fn(),
+            updateProduct: jest.fn(),
           },
         },
       ],
@@ -131,6 +132,54 @@ describe('ProductUsecase', () => {
       ExceptionConstant.PRODUCT_NOT_FOUND_MESSAGE.replace(
         '{id}',
         id.toString(),
+      ),
+    );
+  });
+
+  it('should update product stock successfully', async () => {
+    // Arrange
+    const product: Product = {
+      id: 1,
+      name: 'Product 1',
+      description: 'Description 1',
+      price: 10,
+      stock: 5,
+      image: 'image1.jpg',
+    };
+    const quantity = 2;
+    jest
+      .spyOn(productPersistencePort, 'getProductById')
+      .mockResolvedValue(product);
+
+    // Act
+    await productUsecase.updateProductStock(product.id, quantity);
+
+    // Assert
+    expect(product.stock).toBe(3);
+    expect(productPersistencePort.updateProduct).toHaveBeenCalledWith(
+      product.id,
+      product,
+    );
+  });
+
+  it('should throw ProductNotFoundError when product does not exist', async () => {
+    // Arrange
+    const productId = 1;
+    const quantity = 2;
+    jest
+      .spyOn(productPersistencePort, 'getProductById')
+      .mockResolvedValue(null);
+
+    // Act & Assert
+    await expect(
+      productUsecase.updateProductStock(productId, quantity),
+    ).rejects.toThrow(ProductNotFoundError);
+    await expect(
+      productUsecase.updateProductStock(productId, quantity),
+    ).rejects.toThrow(
+      ExceptionConstant.PRODUCT_NOT_FOUND_MESSAGE.replace(
+        '{id}',
+        productId.toString(),
       ),
     );
   });

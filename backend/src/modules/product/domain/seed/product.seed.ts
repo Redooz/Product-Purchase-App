@@ -8,7 +8,10 @@ export function generateProducts(count: number): Product[] {
       id: i + 1,
       name: faker.commerce.productName(),
       description: faker.commerce.productDescription(),
-      price: parseFloat(faker.commerce.price()),
+      price: faker.number.int({
+        min: 1000,
+        max: 1000000,
+      }),
       stock: faker.number.int({
         min: 1,
         max: 100,

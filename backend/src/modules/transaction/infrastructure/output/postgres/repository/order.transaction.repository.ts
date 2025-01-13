@@ -17,6 +17,24 @@ export class OrderTransactionRepository {
     return await this.repository.save(orderTransaction);
   }
 
+  async getOrderTransactionById(id: number): Promise<OrderTransactionEntity> {
+    return await this.repository.findOne({
+      where: { id },
+      relations: ['status', 'product', 'delivery', 'customer'],
+    });
+  }
+
+  async updateOrderTransaction(
+    id: number,
+    orderTransaction: Partial<OrderTransactionEntity>,
+  ): Promise<OrderTransactionEntity> {
+    await this.repository.update(id, orderTransaction);
+    return await this.repository.findOne({
+      where: { id },
+      relations: ['status', 'product', 'delivery'],
+    });
+  }
+
   async getAllPendingOrderTransactionsByCustomerId(
     customerId: number,
   ): Promise<OrderTransactionEntity[]> {

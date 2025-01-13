@@ -17,10 +17,13 @@ export class OrderTransactionEntity {
   @PrimaryGeneratedColumn()
   id?: number;
 
+  @Column({ name: 'payment_gateway_transaction_id', nullable: true })
+  paymentGatewayTransactionId?: string;
+
   @Column()
   quantity: number;
 
-  @OneToOne(() => ProductEntity)
+  @ManyToOne(() => ProductEntity, (product) => product.orderTransactions)
   @JoinColumn({ name: 'product_id' })
   product?: ProductEntity;
 
@@ -32,11 +35,7 @@ export class OrderTransactionEntity {
   @JoinColumn({ name: 'delivery_id' })
   delivery?: DeliveryEntity;
 
-  @Column({
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-  })
+  @Column()
   total: number;
 
   @ManyToOne(
@@ -44,6 +43,9 @@ export class OrderTransactionEntity {
     (status) => status.orderTransactions,
   )
   status: TransactionStatusEntity;
+
+  @Column({ name: 'acceptance_token_end_user_policy' })
+  acceptanceTokenEndUserPolicy: string;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt?: Date;

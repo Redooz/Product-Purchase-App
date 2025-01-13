@@ -4,6 +4,8 @@ export interface Delivery {
   address: string;
   country: string;
   city: string;
+  region: string;
   postalCode: string;
+  phoneNumber: string;
   fee?: number;
 }

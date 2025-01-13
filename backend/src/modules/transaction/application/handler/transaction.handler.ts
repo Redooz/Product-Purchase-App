@@ -7,6 +7,8 @@ import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { Customer } from '@/customer/domain/model/customer';
 import { PayloadToken } from '@/auth/domain/model/token.model';
 import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
+import { FinishTransactionRequest } from '@/transaction/application/dto/request/finish.transaction.request';
+import { FinishTransactionResponse } from '@/transaction/application/dto/response/finish.transaction.response';
 
 @Injectable()
 export class TransactionHandler {
@@ -30,10 +32,12 @@ export class TransactionHandler {
         id: loggedCustomer.id,
       },
       delivery: {
+        phoneNumber: startTransactionRequestDto.deliveryInfo.phoneNumber,
         personName: startTransactionRequestDto.deliveryInfo.personName,
         address: startTransactionRequestDto.deliveryInfo.address,
         country: startTransactionRequestDto.deliveryInfo.country,
         city: startTransactionRequestDto.deliveryInfo.city,
+        region: startTransactionRequestDto.deliveryInfo.region,
         postalCode: startTransactionRequestDto.deliveryInfo.postalCode,
       },
     };
@@ -42,10 +46,43 @@ export class TransactionHandler {
       startTransactionModel,
     );
 
+    const acceptanceEndUserPolicy =
+      response.transaction.acceptanceEndUserPolicy;
+    const acceptancePersonalDataAuthorization =
+      response.transaction.acceptancePersonalDataAuthorization;
+
     return {
       id: response.transaction.id,
       total: response.transaction.total,
       status: response.transaction.status.name,
+      deliveryFee: response.delivery.fee,
+      endUserPolicy: {
+        acceptanceToken: acceptanceEndUserPolicy.acceptanceToken,
+        type: acceptanceEndUserPolicy.type,
+        permalink: acceptanceEndUserPolicy.permalink,
+      },
+      personalDataAuthorization: {
+        acceptanceToken: acceptancePersonalDataAuthorization.acceptanceToken,
+        type: acceptancePersonalDataAuthorization.type,
+        permalink: acceptancePersonalDataAuthorization.permalink,
+      },
+    };
+  }
+
+  async finishTransaction({
+    transactionId,
+    card,
+  }: FinishTransactionRequest): Promise<FinishTransactionResponse> {
+    const response =
+      await this.transactionServicePort.finishTransactionWithCard(
+        transactionId,
+        card,
+      );
+
+    return {
+      id: response.id,
+      total: response.total,
+      status: response.status.name,
       deliveryFee: response.delivery.fee,
     };
   }

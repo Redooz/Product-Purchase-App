@@ -25,6 +25,19 @@ export class ProductPersistenceAdapter extends ProductPersistencePort {
     return await this.repository.createProducts(productEntities);
   }
 
+  override async updateProduct(id: number, product: Product): Promise<void> {
+    const productEntity: ProductEntity = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      image: product.image,
+    };
+
+    return await this.repository.updateProduct(id, productEntity);
+  }
+
   override async getProducts(): Promise<Product[] | null> {
     const productEntities = await this.repository.getProducts();
 

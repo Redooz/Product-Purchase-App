@@ -4,6 +4,7 @@ import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { OrderTransactionEntity } from '@/transaction/infrastructure/output/postgres/entity/order.transaction.entity';
 import { Status } from '@/transaction/domain/model/enum/status';
 import { Injectable } from '@nestjs/common';
+import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
 
 @Injectable()
 export class TransactionPersistenceAdapter extends TransactionPersistencePort {
@@ -17,6 +18,8 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
     transaction: OrderTransaction,
   ): Promise<OrderTransaction> {
     const orderTransactionEntity: OrderTransactionEntity = {
+      acceptanceTokenEndUserPolicy:
+        transaction.acceptanceEndUserPolicy.acceptanceToken,
       customer: transaction.customer,
       product: transaction.product,
       quantity: transaction.quantity,
@@ -33,26 +36,24 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
         orderTransactionEntity,
       );
 
-    return {
-      id: savedOrderTransaction.id,
-      customer: savedOrderTransaction.customer,
-      product: {
-        id: savedOrderTransaction.product.id,
-        name: savedOrderTransaction.product.name,
-        description: savedOrderTransaction.product.description,
-        price: savedOrderTransaction.product.price,
-        stock: savedOrderTransaction.product.stock,
-        image: savedOrderTransaction.product.image,
-      },
-      quantity: savedOrderTransaction.quantity,
-      total: savedOrderTransaction.total,
-      delivery: savedOrderTransaction.delivery,
-      status: {
-        id: savedOrderTransaction.status.id,
-        name: savedOrderTransaction.status.name as Status,
-      },
-      createdAt: savedOrderTransaction.createdAt,
-    };
+    return this.mapOrderTransactionEntityToOrderTransaction(
+      savedOrderTransaction,
+    );
+  }
+
+  override async getTransactionById(
+    id: number,
+  ): Promise<OrderTransaction | null> {
+    const orderTransactionEntity =
+      await this.orderTransactionRepository.getOrderTransactionById(id);
+
+    if (!orderTransactionEntity) {
+      return null;
+    }
+
+    return this.mapOrderTransactionEntityToOrderTransaction(
+      orderTransactionEntity,
+    );
   }
 
   override async getAllPendingOrderTransactionsByCustomerId(
@@ -63,27 +64,100 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
         customerId,
       );
 
-    return pendingOrderTransactions.map((orderTransaction) => ({
-      id: orderTransaction.id,
-      quantity: orderTransaction.quantity,
-      total: orderTransaction.total,
+    return pendingOrderTransactions.map(
+      this.mapOrderTransactionEntityToPartialOrderTransaction,
+    );
+  }
+
+  override async updateOrderTransaction(
+    id: number,
+    orderTransaction: Partial<OrderTransaction>,
+  ): Promise<OrderTransaction> {
+    const updatedOrderTransaction =
+      await this.orderTransactionRepository.updateOrderTransaction(
+        id,
+        this.mapOrderTransactionModelToEntity(orderTransaction),
+      );
+
+    return this.mapOrderTransactionEntityToOrderTransaction(
+      updatedOrderTransaction,
+    );
+  }
+
+  private mapOrderTransactionModelToEntity(
+    transaction: Partial<OrderTransaction>,
+  ): OrderTransactionEntity {
+    return {
+      acceptanceTokenEndUserPolicy:
+        transaction.acceptanceEndUserPolicy.acceptanceToken,
+      customer: transaction.customer,
+      product: transaction.product,
+      quantity: transaction.quantity,
+      total: transaction.total,
+      delivery: transaction.delivery,
+      status: {
+        id: transaction.status.id,
+        name: transaction.status.name,
+      },
+      paymentGatewayTransactionId: transaction.paymentGatewayTransactionId,
+    };
+  }
+
+  private mapOrderTransactionEntityToOrderTransaction(
+    entity: OrderTransactionEntity,
+  ): OrderTransaction {
+    return {
+      acceptanceEndUserPolicy: {
+        acceptanceToken: entity.acceptanceTokenEndUserPolicy,
+        type: AcceptanceType.END_USER_POLICY,
+      },
+      id: entity.id,
+      customer: entity.customer,
+      product: {
+        id: entity.product.id,
+        name: entity.product.name,
+        description: entity.product.description,
+        price: entity.product.price,
+        stock: entity.product.stock,
+        image: entity.product.image,
+      },
+      quantity: entity.quantity,
+      total: entity.total,
+      delivery: entity.delivery,
+      status: {
+        id: entity.status.id,
+        name: entity.status.name as Status,
+      },
+      createdAt: entity.createdAt,
+    };
+  }
+
+  private mapOrderTransactionEntityToPartialOrderTransaction(
+    entity: OrderTransactionEntity,
+  ): Partial<OrderTransaction> {
+    return {
+      id: entity.id,
+      quantity: entity.quantity,
+      total: entity.total,
       delivery: {
-        id: orderTransaction.delivery.id,
-        personName: orderTransaction.delivery.personName,
-        address: orderTransaction.delivery.address,
-        country: orderTransaction.delivery.country,
-        city: orderTransaction.delivery.city,
-        postalCode: orderTransaction.delivery.postalCode,
+        id: entity.delivery.id,
+        personName: entity.delivery.personName,
+        address: entity.delivery.address,
+        country: entity.delivery.country,
+        city: entity.delivery.city,
+        postalCode: entity.delivery.postalCode,
+        region: entity.delivery.region,
+        phoneNumber: entity.delivery.phoneNumber,
       },
       product: {
-        id: orderTransaction.product.id,
-        name: orderTransaction.product.name,
-        price: orderTransaction.product.price,
+        id: entity.product.id,
+        name: entity.product.name,
+        price: entity.product.price,
       },
       status: {
-        id: orderTransaction.status.id,
-        name: orderTransaction.status.name as Status,
+        id: entity.status.id,
+        name: entity.status.name as Status,
       },
-    }));
+    };
   }
 }

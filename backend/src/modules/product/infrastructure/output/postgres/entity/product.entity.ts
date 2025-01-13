@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { OrderTransactionEntity } from '@/transaction/infrastructure/output/postgres/entity/order.transaction.entity';
 
 @Entity({ name: 'products' })
 export class ProductEntity {
@@ -11,11 +12,7 @@ export class ProductEntity {
   @Column()
   description?: string;
 
-  @Column({
-    type: 'decimal',
-    precision: 10,
-    scale: 2,
-  })
+  @Column()
   price?: number;
 
   @Column()
@@ -23,4 +20,10 @@ export class ProductEntity {
 
   @Column({ nullable: true })
   image?: string;
+
+  @OneToMany(
+    () => OrderTransactionEntity,
+    (orderTransaction) => orderTransaction.product,
+  )
+  orderTransactions?: OrderTransactionEntity[];
 }
