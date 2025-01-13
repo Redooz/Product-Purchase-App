@@ -40,6 +40,9 @@ describe('TransactionPersistenceAdapter', () => {
       total: 200,
       delivery: { fee: 5 },
       status: { id: 1, name: Status.PENDING },
+      acceptanceEndUserPolicy: {
+        acceptanceToken: 'token',
+      },
     } as OrderTransaction;
     const orderTransactionEntity: OrderTransactionEntity = {
       id: 1,
@@ -50,6 +53,7 @@ describe('TransactionPersistenceAdapter', () => {
       delivery: orderTransaction.delivery,
       status: { id: 1, name: Status.PENDING },
       createdAt: new Date(),
+      acceptanceTokenEndUserPolicy: 'token',
     } as OrderTransactionEntity;
 
     jest
@@ -77,6 +81,10 @@ describe('TransactionPersistenceAdapter', () => {
       delivery: orderTransaction.delivery,
       status: { id: 1, name: Status.PENDING },
       createdAt: orderTransactionEntity.createdAt,
+      acceptanceEndUserPolicy: {
+        acceptanceToken: 'token',
+        type: 'END_USER_POLICY',
+      },
     });
   });
 

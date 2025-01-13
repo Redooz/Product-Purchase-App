@@ -5,6 +5,7 @@ import { StartTransactionRequest } from '@/transaction/application/dto/request/s
 import { StartTransactionResponse } from '@/transaction/application/dto/response/start.transaction.response';
 import { Request } from 'express';
 import { Status } from '@/transaction/domain/model/enum/status';
+import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
 
 describe('TransactionHandler', () => {
   let transactionHandler: TransactionHandler;
@@ -42,9 +43,21 @@ describe('TransactionHandler', () => {
         country: 'USA',
         city: 'New York',
         postalCode: '10001',
+        region: 'NY',
+        phoneNumber: '+5511999999999',
       },
     };
     const startTransactionResponse: StartTransactionResponse = {
+      endUserPolicy: {
+        type: AcceptanceType.END_USER_POLICY,
+        acceptanceToken: 'token',
+        permalink: 'permalink',
+      },
+      personalDataAuthorization: {
+        type: AcceptanceType.PERSONAL_DATA_AUTHORIZATION,
+        acceptanceToken: 'token',
+        permalink: 'permalink',
+      },
       id: 1,
       total: 205,
       status: 'PENDING',
@@ -60,6 +73,16 @@ describe('TransactionHandler', () => {
         product: undefined,
         customer: undefined,
         delivery: undefined,
+        acceptanceEndUserPolicy: {
+          acceptanceToken: 'token',
+          type: AcceptanceType.END_USER_POLICY,
+          permalink: 'permalink',
+        },
+        acceptancePersonalDataAuthorization: {
+          acceptanceToken: 'token',
+          type: AcceptanceType.PERSONAL_DATA_AUTHORIZATION,
+          permalink: 'permalink',
+        },
       },
       delivery: {
         personName: 'John Doe',
@@ -68,6 +91,8 @@ describe('TransactionHandler', () => {
         city: 'New York',
         postalCode: '10001',
         fee: 5,
+        region: 'NY',
+        phoneNumber: '+5511999999999',
       },
     });
 
@@ -124,6 +149,8 @@ describe('TransactionHandler', () => {
             country: 'USA',
             city: 'New York',
             postalCode: '10001',
+            region: 'NY',
+            phoneNumber: '+5511999999999',
           },
           product: {
             id: 1,

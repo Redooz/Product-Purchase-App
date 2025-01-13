@@ -29,6 +29,8 @@ describe('DeliveryPersistenceAdapter', () => {
   it('should create a delivery successfully', async () => {
     // Arrange
     const delivery: Delivery = {
+      phoneNumber: '+5511999999999',
+      region: 'NY',
       id: 1,
       address: '123 Main St',
       fee: 5,

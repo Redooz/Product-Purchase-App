@@ -10,14 +10,21 @@ import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { Product } from '@/product/domain/model/product';
 import { Delivery } from '@/modules/delivery/domain/model/delivery';
 import { Status } from '@/transaction/domain/model/enum/status';
+import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.service.port';
+import { PaymentGatewayServicePort } from '@/transaction/domain/spi/payment.gateway.service.port';
+import { Acceptance } from '@/transaction/domain/model/acceptance';
+import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
 
 describe('TransactionUsecase', () => {
-  let transactionUsecase: TransactionUsecase;
   let productServicePort: ProductServicePort;
   let customerServicePort: CustomerServicePort;
   let deliveryServicePort: DeliveryServicePort;
+  let acceptanceServicePort: AcceptanceServicePort;
+  let paymentGatewayServicePort: PaymentGatewayServicePort;
   let transactionPersistencePort: TransactionPersistencePort;
   let transactionStatusPersistencePort: TransactionStatusPersistencePort;
+
+  let transactionUsecase: TransactionUsecase;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -42,6 +49,18 @@ describe('TransactionUsecase', () => {
           },
         },
         {
+          provide: AcceptanceServicePort,
+          useValue: {
+            getAllPresignedAcceptances: jest.fn(),
+          },
+        },
+        {
+          provide: PaymentGatewayServicePort,
+          useValue: {
+            pay: jest.fn(),
+          },
+        },
+        {
           provide: TransactionPersistencePort,
           useValue: {
             startTransaction: jest.fn(),
@@ -61,6 +80,13 @@ describe('TransactionUsecase', () => {
     productServicePort = module.get<ProductServicePort>(ProductServicePort);
     customerServicePort = module.get<CustomerServicePort>(CustomerServicePort);
     deliveryServicePort = module.get<DeliveryServicePort>(DeliveryServicePort);
+    acceptanceServicePort = module.get<AcceptanceServicePort>(
+      AcceptanceServicePort,
+    );
+    paymentGatewayServicePort = module.get<PaymentGatewayServicePort>(
+      PaymentGatewayServicePort,
+    );
+
     transactionPersistencePort = module.get<TransactionPersistencePort>(
       TransactionPersistencePort,
     );
@@ -83,6 +109,18 @@ describe('TransactionUsecase', () => {
     const customer = { id: 1 };
     const product: Product = { id: 1, stock: 10, price: 100 } as Product;
     const delivery: Delivery = { fee: 5 } as Delivery;
+    const presignedAcceptances: Acceptance[] = [
+      {
+        type: AcceptanceType.END_USER_POLICY,
+        acceptanceToken: 'token',
+        permalink: 'permalink',
+      },
+      {
+        type: AcceptanceType.PERSONAL_DATA_AUTHORIZATION,
+        acceptanceToken: 'token',
+        permalink: 'permalink',
+      },
+    ];
     const status = { name: Status.PENDING };
 
     jest
@@ -98,6 +136,9 @@ describe('TransactionUsecase', () => {
     jest
       .spyOn(transactionPersistencePort, 'startTransaction')
       .mockResolvedValue(pendingTransaction);
+    jest
+      .spyOn(acceptanceServicePort, 'getAllPresignedAcceptances')
+      .mockResolvedValue(presignedAcceptances);
 
     // Act
     const result =
@@ -143,6 +184,8 @@ describe('TransactionUsecase', () => {
           country: '',
           city: '',
           postalCode: '',
+          region: '',
+          phoneNumber: '',
         },
       },
     ];

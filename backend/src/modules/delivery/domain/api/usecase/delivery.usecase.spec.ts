@@ -16,13 +16,15 @@ describe('DeliveryUsecase', () => {
   it('should create a delivery successfully', async () => {
     // Arrange
     const delivery: Delivery = {
+      phoneNumber: '+5511999999999',
+      region: 'NY',
       id: 1,
       address: '123 Main St',
       fee: 5,
       city: 'New York',
       country: 'USA',
       personName: 'John Doe',
-      postalCode: '10001',
+      postalCode: '10001'
     };
     jest
       .spyOn(deliveryPersistencePort, 'createDelivery')

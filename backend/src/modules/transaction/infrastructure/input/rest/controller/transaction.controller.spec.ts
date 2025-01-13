@@ -57,11 +57,23 @@ describe('TransactionController', () => {
         country: 'country',
         personName: 'personName',
         postalCode: 'postalCode',
+        region: 'region',
+        phoneNumber: '+5511999999999',
       },
       productId: 1,
       quantity: 1,
     };
     const startTransactionResponse: StartTransactionResponse = {
+      endUserPolicy: {
+        type: 'type',
+        acceptanceToken: 'token',
+        permalink: 'url',
+      },
+      personalDataAuthorization: {
+        type: 'type',
+        acceptanceToken: 'token',
+        permalink: 'url',
+      },
       status: 'success',
       id: 1,
       deliveryFee: 10,
@@ -96,6 +108,8 @@ describe('TransactionController', () => {
         country: 'country',
         personName: 'personName',
         postalCode: 'postalCode',
+        region: 'region',
+        phoneNumber: '+5511999999999',
       },
       productId: 1,
       quantity: 1,
