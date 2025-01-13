@@ -7,6 +7,8 @@ import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { Customer } from '@/customer/domain/model/customer';
 import { PayloadToken } from '@/auth/domain/model/token.model';
 import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
+import { FinishTransactionRequest } from '@/transaction/application/dto/request/finish.transaction.request';
+import { FinishTransactionResponse } from '@/transaction/application/dto/response/finish.transaction.response';
 
 @Injectable()
 export class TransactionHandler {
@@ -64,6 +66,24 @@ export class TransactionHandler {
         type: acceptancePersonalDataAuthorization.type,
         permalink: acceptancePersonalDataAuthorization.permalink,
       },
+    };
+  }
+
+  async finishTransaction({
+    transactionId,
+    card,
+  }: FinishTransactionRequest): Promise<FinishTransactionResponse> {
+    const response =
+      await this.transactionServicePort.finishTransactionWithCard(
+        transactionId,
+        card,
+      );
+
+    return {
+      id: response.id,
+      total: response.total,
+      status: response.status.name,
+      deliveryFee: response.delivery.fee,
     };
   }
 

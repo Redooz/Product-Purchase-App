@@ -3,7 +3,8 @@ import {
   ApiTags,
   ApiOperation,
   ApiResponse,
-  ApiBearerAuth, ApiBody
+  ApiBearerAuth,
+  ApiBody,
 } from '@nestjs/swagger';
 import { TransactionHandler } from '@/transaction/application/handler/transaction.handler';
 import { Request } from 'express';
@@ -12,6 +13,7 @@ import { StartTransactionResponse } from '@/transaction/application/dto/response
 import { JwtAuthGuard } from '@/auth/infrastructure/external/guard/jwt.guard';
 import { TransactionExceptionHandler } from '@/transaction/infrastructure/input/exceptionhandler/transaction.exception.handler';
 import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
+import { FinishTransactionRequest } from '@/transaction/application/dto/request/finish.transaction.request';
 
 @ApiTags('transactions')
 @ApiBearerAuth()
@@ -45,6 +47,29 @@ export class TransactionController {
       );
     } catch (error) {
       this.exceptionHandler.handleStartTransaction(error);
+    }
+  }
+
+  @Post('/finish')
+  @ApiOperation({ summary: 'Finish a transaction' })
+  @ApiBody({ type: FinishTransactionRequest })
+  @ApiResponse({
+    status: 201,
+    description: 'Transaction finished successfully',
+    type: GetTransactionResponse,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  async finishTransaction(
+    @Body() finishTransactionDto: FinishTransactionRequest,
+  ) {
+    try {
+      return await this.transactionHandler.finishTransaction(
+        finishTransactionDto,
+      );
+    } catch (error) {
+      this.exceptionHandler.handleFinishTransaction(error);
     }
   }
 

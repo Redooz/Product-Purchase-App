@@ -12,6 +12,11 @@ import { DeliveryServicePort } from '@/modules/delivery/domain/api/delivery.serv
 import { Delivery } from '@/modules/delivery/domain/model/delivery';
 import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.service.port';
 import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
+import { Card } from '@/transaction/domain/model/card';
+import { TransactionNotFoundError } from '@/transaction/domain/exception/transaction.not.found.error';
+import { PaymentGatewayServicePort } from '@/transaction/domain/spi/payment.gateway.service.port';
+import { PaymentStatus } from '@/transaction/domain/model/enum/payment.status';
+import { TransactionAlreadyFinishedError } from '@/transaction/domain/exception/transaction.already.finished.error';
 
 @Injectable()
 export class TransactionUsecase extends TransactionServicePort {
@@ -20,6 +25,7 @@ export class TransactionUsecase extends TransactionServicePort {
     private readonly customerServicePort: CustomerServicePort,
     private readonly deliveryServicePort: DeliveryServicePort,
     private readonly acceptanceServicePort: AcceptanceServicePort,
+    private readonly paymentGatewayServicePort: PaymentGatewayServicePort,
     private readonly transactionPersistencePort: TransactionPersistencePort,
     private readonly transactionStatusPersistencePort: TransactionStatusPersistencePort,
   ) {
@@ -101,8 +107,8 @@ export class TransactionUsecase extends TransactionServicePort {
   }
 
   private calculateDeliveryFee(): number {
-    // random value between 1 usd and 5 usd
-    return Math.floor(Math.random() * 5) + 1;
+    // random value between 1000 and 5000
+    return Math.floor(Math.random() * 4000) + 1000;
   }
 
   override async getAllPendingOrderTransactionsByCustomerId(
@@ -111,5 +117,65 @@ export class TransactionUsecase extends TransactionServicePort {
     return await this.transactionPersistencePort.getAllPendingOrderTransactionsByCustomerId(
       customerId,
     );
+  }
+
+  override async finishTransactionWithCard(
+    id: number,
+    card: Card,
+  ): Promise<OrderTransaction> {
+    const transaction =
+      await this.transactionPersistencePort.getTransactionById(id);
+
+    if (!transaction) {
+      throw new TransactionNotFoundError(id.toString());
+    }
+
+    if (transaction.status.name !== Status.PENDING) {
+      throw new TransactionAlreadyFinishedError(transaction.id);
+    }
+
+    if (
+      this.productQuantityIsNotAvailable(
+        transaction.product,
+        transaction.quantity,
+      )
+    ) {
+      throw new ProductQuantityNotAvailableError();
+    }
+
+    const result = await this.paymentGatewayServicePort.pay(transaction, card);
+
+    transaction.status =
+      await this.transactionStatusPersistencePort.getTransactionStatusByName(
+        this.fromPaymentStatusToTransactionStatus(result.status),
+      );
+    transaction.paymentGatewayTransactionId = result.id;
+
+    if (result.status === PaymentStatus.APPROVED) {
+      await this.productServicePort.updateProductStock(
+        transaction.product.id,
+        transaction.quantity,
+      );
+    }
+
+    return await this.transactionPersistencePort.updateOrderTransaction(
+      id,
+      transaction,
+    );
+  }
+
+  private fromPaymentStatusToTransactionStatus(status: PaymentStatus): Status {
+    switch (status) {
+      case PaymentStatus.APPROVED:
+        return Status.APPROVED;
+      case PaymentStatus.DECLINED:
+        return Status.REJECTED;
+      case PaymentStatus.ERROR:
+        return Status.REJECTED;
+      case PaymentStatus.VOIDED:
+        return Status.REJECTED;
+      default:
+        return Status.PENDING;
+    }
   }
 }

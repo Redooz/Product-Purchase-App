@@ -12,6 +12,26 @@ export class ProductUsecase extends ProductServicePort {
     super();
   }
 
+  override async updateProductStock(
+    productId: number,
+    quantity: number,
+  ): Promise<void> {
+    const product = await this.productPersistencePort.getProductById(productId);
+
+    if (!product) {
+      throw new ProductNotFoundError(
+        ExceptionConstant.PRODUCT_NOT_FOUND_MESSAGE.replace(
+          '{id}',
+          productId.toString(),
+        ),
+      );
+    }
+
+    product.stock = product.stock - quantity;
+
+    await this.productPersistencePort.updateProduct(productId, product);
+  }
+
   override async getProducts(): Promise<Product[]> {
     const products = await this.productPersistencePort.getProducts();
 

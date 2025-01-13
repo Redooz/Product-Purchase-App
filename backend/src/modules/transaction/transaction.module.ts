@@ -20,6 +20,8 @@ import { HttpModule } from '@nestjs/axios';
 import { WompiApiClient } from '@/transaction/infrastructure/external/wompi/api/wompi.api.client';
 import { WompiAcceptanceServiceAdapter } from '@/transaction/infrastructure/external/wompi/adapter/wompi.acceptance.service.adapter';
 import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.service.port';
+import { WompiPaymentGatewayServiceAdapter } from '@/transaction/infrastructure/external/wompi/adapter/wompi.payment.gateway.service.adapter';
+import { PaymentGatewayServicePort } from '@/transaction/domain/spi/payment.gateway.service.port';
 
 @Module({
   imports: [
@@ -40,6 +42,7 @@ import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.servi
     TransactionExceptionHandler,
     WompiApiClient,
     WompiAcceptanceServiceAdapter,
+    WompiPaymentGatewayServiceAdapter,
     {
       provide: TransactionServicePort,
       useExisting: TransactionUsecase,
@@ -54,7 +57,11 @@ import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.servi
     },
     {
       provide: AcceptanceServicePort,
-      useClass: WompiAcceptanceServiceAdapter,
+      useExisting: WompiAcceptanceServiceAdapter,
+    },
+    {
+      provide: PaymentGatewayServicePort,
+      useExisting: WompiPaymentGatewayServiceAdapter,
     },
   ],
 })

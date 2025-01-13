@@ -30,4 +30,24 @@ export class TransactionExceptionHandler {
     Logger.error('Unexpected error', error.stack, ProductExceptionHandler.name);
     throw error;
   }
+
+  handleFinishTransaction(error: Error) {
+    switch (error.constructor.name) {
+      case 'TransactionAlreadyFinishedError':
+        throw new BadRequestException(error.message);
+      case 'ProductQuantityNotAvailableError':
+        throw new BadRequestException(error.message);
+      case 'TransactionNotFoundError':
+        throw new NotFoundException(error.message);
+      case 'ProductNotFoundError':
+        throw new NotFoundException(error.message);
+      default:
+        Logger.error(
+          'Unexpected error',
+          error.stack,
+          ProductExceptionHandler.name,
+        );
+        throw error;
+    }
+  }
 }

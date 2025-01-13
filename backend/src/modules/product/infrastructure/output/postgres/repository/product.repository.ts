@@ -18,6 +18,10 @@ export class ProductRepository {
     await this.repository.save(products);
   }
 
+  async updateProduct(id: number, product: ProductEntity): Promise<void> {
+    await this.repository.update(id, product);
+  }
+
   async getProductById(id: number): Promise<ProductEntity> {
     return await this.repository.findOne({ where: { id } });
   }

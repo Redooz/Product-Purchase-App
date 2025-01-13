@@ -6,6 +6,7 @@ import { Acceptance } from '@/transaction/domain/model/acceptance';
 
 export interface OrderTransaction {
   id?: number;
+  paymentGatewayTransactionId?: string;
   quantity: number;
   product: Product;
   customer: Customer;
