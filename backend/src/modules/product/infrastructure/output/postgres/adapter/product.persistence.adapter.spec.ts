@@ -18,6 +18,7 @@ describe('ProductPersistenceAdapter', () => {
             createProducts: jest.fn(),
             getProducts: jest.fn(),
             getProductById: jest.fn(),
+            updateProduct: jest.fn(),
           },
         },
       ],
@@ -155,5 +156,34 @@ describe('ProductPersistenceAdapter', () => {
 
     // Assert
     expect(result).toBeNull();
+  });
+
+  it('should update product successfully', async () => {
+    // Arrange
+    const product: Product = {
+      id: 1,
+      name: 'Product 1',
+      description: 'Description 1',
+      price: 100,
+      stock: 10,
+      image: 'image1.jpg',
+    };
+    const productEntity: ProductEntity = {
+      id: product.id,
+      name: product.name,
+      description: product.description,
+      price: product.price,
+      stock: product.stock,
+      image: product.image,
+    };
+
+    // Act
+    await productPersistenceAdapter.updateProduct(1, product);
+
+    // Assert
+    expect(productRepository.updateProduct).toHaveBeenCalledWith(
+      1,
+      productEntity,
+    );
   });
 });

@@ -60,4 +60,16 @@ describe('ProductRepository', () => {
     // Assert
     expect(result).toEqual(product);
   });
+
+  it('should update a product', async () => {
+    // Arrange
+    const product = new ProductEntity();
+    jest.spyOn(repository, 'update').mockResolvedValue(undefined);
+
+    // Act
+    await productRepository.updateProduct(1, product);
+
+    // Assert
+    expect(repository.update).toHaveBeenCalledWith(1, product);
+  });
 });

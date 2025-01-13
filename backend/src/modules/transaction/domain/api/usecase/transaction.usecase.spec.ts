@@ -14,6 +14,10 @@ import { AcceptanceServicePort } from '@/transaction/domain/spi/acceptance.servi
 import { PaymentGatewayServicePort } from '@/transaction/domain/spi/payment.gateway.service.port';
 import { Acceptance } from '@/transaction/domain/model/acceptance';
 import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
+import { Card } from '@/transaction/domain/model/card';
+import { TransactionAlreadyFinishedError } from '@/transaction/domain/exception/transaction.already.finished.error';
+import { TransactionNotFoundError } from '@/transaction/domain/exception/transaction.not.found.error';
+import { PaymentStatus } from '@/transaction/domain/model/enum/payment.status';
 
 describe('TransactionUsecase', () => {
   let productServicePort: ProductServicePort;
@@ -34,6 +38,7 @@ describe('TransactionUsecase', () => {
           provide: ProductServicePort,
           useValue: {
             getProductById: jest.fn(),
+            updateProductStock: jest.fn(),
           },
         },
         {
@@ -65,6 +70,8 @@ describe('TransactionUsecase', () => {
           useValue: {
             startTransaction: jest.fn(),
             getAllPendingOrderTransactionsByCustomerId: jest.fn(),
+            getTransactionById: jest.fn(),
+            updateOrderTransaction: jest.fn(),
           },
         },
         {
@@ -204,5 +211,135 @@ describe('TransactionUsecase', () => {
 
     // Assert
     expect(result[0].id).toEqual(pendingOrderTransactions[0].id);
+  });
+
+  it('should finish a transaction with card successfully', async () => {
+    const transactionId = 1;
+    const card: Card = {
+      number: '4242424242424242',
+      cvc: '123',
+      expMonth: '08',
+      expYear: '28',
+      cardHolder: 'José Pérez',
+    };
+    const transaction: OrderTransaction = {
+      id: transactionId,
+      customer: { id: 1 },
+      product: { id: 1, stock: 10, price: 100 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 1, name: Status.PENDING },
+      createdAt: new Date(),
+    } as OrderTransaction;
+    const paymentResult = {
+      id: 'paymentId',
+      status: PaymentStatus.APPROVED,
+    };
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(transaction);
+    jest
+      .spyOn(paymentGatewayServicePort, 'pay')
+      .mockResolvedValue(paymentResult);
+    jest
+      .spyOn(transactionStatusPersistencePort, 'getTransactionStatusByName')
+      .mockResolvedValue({
+        id: 2,
+        name: Status.APPROVED,
+      });
+    jest
+      .spyOn(productServicePort, 'updateProductStock')
+      .mockResolvedValue(undefined);
+    jest
+      .spyOn(transactionPersistencePort, 'updateOrderTransaction')
+      .mockResolvedValue(transaction);
+
+    const result = await transactionUsecase.finishTransactionWithCard(
+      transactionId,
+      card,
+    );
+
+    expect(result).toEqual(transaction);
+    expect(result.status.name).toBe(Status.APPROVED);
+    expect(result.paymentGatewayTransactionId).toBe(paymentResult.id);
+  });
+
+  it('should throw TransactionNotFoundError if transaction does not exist', async () => {
+    const transactionId = 999;
+    const card: Card = {
+      number: '4242424242424242',
+      cvc: '123',
+      expMonth: '08',
+      expYear: '28',
+      cardHolder: 'José Pérez',
+    };
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(null);
+
+    await expect(
+      transactionUsecase.finishTransactionWithCard(transactionId, card),
+    ).rejects.toThrow(TransactionNotFoundError);
+  });
+
+  it('should throw TransactionAlreadyFinishedError if transaction is not pending', async () => {
+    const transactionId = 1;
+    const card: Card = {
+      number: '4242424242424242',
+      cvc: '123',
+      expMonth: '08',
+      expYear: '28',
+      cardHolder: 'José Pérez',
+    };
+    const transaction: OrderTransaction = {
+      id: transactionId,
+      customer: { id: 1 },
+      product: { id: 1, stock: 10, price: 100 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 2, name: Status.APPROVED },
+      createdAt: new Date(),
+    } as OrderTransaction;
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(transaction);
+
+    await expect(
+      transactionUsecase.finishTransactionWithCard(transactionId, card),
+    ).rejects.toThrow(TransactionAlreadyFinishedError);
+  });
+
+  it('should throw ProductQuantityNotAvailableError if product quantity is not available', async () => {
+    const transactionId = 1;
+    const card: Card = {
+      number: '4242424242424242',
+      cvc: '123',
+      expMonth: '08',
+      expYear: '28',
+      cardHolder: 'José Pérez',
+    };
+    const transaction: OrderTransaction = {
+      id: transactionId,
+      customer: { id: 1 },
+      product: { id: 1, stock: 1, price: 100 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 1, name: Status.PENDING },
+      createdAt: new Date(),
+    } as OrderTransaction;
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(transaction);
+
+    await expect(
+      transactionUsecase.finishTransactionWithCard(transactionId, card),
+    ).rejects.toThrow(ProductQuantityNotAvailableError);
   });
 });

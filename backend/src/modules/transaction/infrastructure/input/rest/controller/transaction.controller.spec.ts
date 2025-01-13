@@ -8,6 +8,8 @@ import { Request } from 'express';
 import { BadRequestException } from '@nestjs/common';
 import { StartTransactionResponse } from '@/transaction/application/dto/response/start.transaction.response';
 import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
+import { FinishTransactionRequest } from '@/transaction/application/dto/request/finish.transaction.request';
+import { FinishTransactionResponse } from '@/transaction/application/dto/response/finish.transaction.response';
 
 describe('TransactionController', () => {
   let transactionController: TransactionController;
@@ -23,6 +25,7 @@ describe('TransactionController', () => {
           useValue: {
             startTransaction: jest.fn(),
             getAllPendingOrderTransactions: jest.fn(),
+            finishTransaction: jest.fn(),
           },
         },
         {
@@ -30,6 +33,7 @@ describe('TransactionController', () => {
           useValue: {
             handleStartTransaction: jest.fn(),
             handleGetAllPendingTransactions: jest.fn(),
+            handleFinishTransaction: jest.fn(),
           },
         },
       ],
@@ -185,5 +189,66 @@ describe('TransactionController', () => {
 
     // Assert
     expect(exceptionHandler.handleGetAllPendingTransactions).toHaveBeenCalled();
+  });
+
+  it('should finish a transaction successfully', async () => {
+    // Arrange
+    const finishTransactionRequest: FinishTransactionRequest = {
+      transactionId: 1,
+      card: {
+        number: '1234 5678 1234 5678',
+        cvc: '123',
+        cardHolder: 'John Doe',
+        expYear: '23',
+        expMonth: '12',
+      },
+    };
+    const getTransactionResponse: FinishTransactionResponse = {
+      id: 1,
+      total: 100,
+      status: 'SUCCESS',
+      deliveryFee: 10,
+    };
+
+    jest
+      .spyOn(transactionHandler, 'finishTransaction')
+      .mockResolvedValue(getTransactionResponse);
+
+    // Act
+    const result = await transactionController.finishTransaction(
+      finishTransactionRequest,
+    );
+
+    // Assert
+    expect(result).toEqual(getTransactionResponse);
+    expect(transactionHandler.finishTransaction).toHaveBeenCalledWith(
+      finishTransactionRequest,
+    );
+  });
+
+  it('should handle an exception when an error occurs finishing a transaction', async () => {
+    // Arrange
+    const finishTransactionRequest: FinishTransactionRequest = {
+      transactionId: 1,
+      card: {
+        number: '1234 5678 1234 5678',
+        cvc: '123',
+        cardHolder: 'John Doe',
+        expYear: '23',
+        expMonth: '12',
+      },
+    };
+
+    jest
+      .spyOn(transactionHandler, 'finishTransaction')
+      .mockRejectedValue(new BadRequestException('Bad Request'));
+
+    jest.spyOn(exceptionHandler, 'handleFinishTransaction');
+
+    // Act
+    await transactionController.finishTransaction(finishTransactionRequest);
+
+    // Assert
+    expect(exceptionHandler.handleFinishTransaction).toHaveBeenCalled();
   });
 });

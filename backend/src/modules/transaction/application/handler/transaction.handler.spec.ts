@@ -6,6 +6,9 @@ import { StartTransactionResponse } from '@/transaction/application/dto/response
 import { Request } from 'express';
 import { Status } from '@/transaction/domain/model/enum/status';
 import { AcceptanceType } from '@/transaction/domain/model/enum/acceptance.type';
+import { FinishTransactionRequest } from '@/transaction/application/dto/request/finish.transaction.request';
+import { FinishTransactionResponse } from '@/transaction/application/dto/response/finish.transaction.response';
+import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 
 describe('TransactionHandler', () => {
   let transactionHandler: TransactionHandler;
@@ -20,6 +23,7 @@ describe('TransactionHandler', () => {
           useValue: {
             startTransaction: jest.fn(),
             getAllPendingOrderTransactionsByCustomerId: jest.fn(),
+            finishTransactionWithCard: jest.fn(),
           },
         },
       ],
@@ -166,5 +170,55 @@ describe('TransactionHandler', () => {
 
     // Assert
     expect(result[0].id).toEqual(getTransactionResponse[0].id);
+  });
+
+  it('should finish a transaction successfully', async () => {
+    // Arrange
+    const finishTransactionRequest: FinishTransactionRequest = {
+      transactionId: 1,
+      card: {
+        number: '1234567890123456',
+        cvc: '123',
+        cardHolder: 'John Doe',
+        expYear: '28',
+        expMonth: '12',
+      },
+    };
+    const finishTransactionResponse: FinishTransactionResponse = {
+      id: 1,
+      total: 205,
+      status: 'PENDING',
+      deliveryFee: 5,
+    };
+    const orderTransaction: OrderTransaction = {
+      customer: undefined,
+      product: undefined,
+      quantity: 0,
+      id: 1,
+      total: 205,
+      status: { name: Status.PENDING },
+      delivery: {
+        fee: 5,
+        region: 'NY',
+        phoneNumber: '+5511999999999',
+        address: '123 Main St',
+        country: 'US',
+        city: 'New York',
+        postalCode: '10001',
+        personName: 'John Doe',
+      },
+    };
+
+    jest
+      .spyOn(transactionServicePort, 'finishTransactionWithCard')
+      .mockResolvedValue(orderTransaction);
+
+    // Act
+    const result = await transactionHandler.finishTransaction(
+      finishTransactionRequest,
+    );
+
+    // Assert
+    expect(result).toEqual(finishTransactionResponse);
   });
 });

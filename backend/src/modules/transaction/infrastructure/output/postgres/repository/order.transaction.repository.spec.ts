@@ -79,4 +79,49 @@ describe('OrderTransactionRepository', () => {
       },
     });
   });
+
+  it('should get order transaction by id successfully', async () => {
+    // Arrange
+    const id = 1;
+    const orderTransaction: OrderTransactionEntity = {
+      id,
+    } as OrderTransactionEntity;
+    jest.spyOn(repository, 'findOne').mockResolvedValue(orderTransaction);
+
+    // Act
+    const result = await orderTransactionRepository.getOrderTransactionById(id);
+
+    // Assert
+    expect(result).toEqual(orderTransaction);
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: { id },
+      relations: ['status', 'product', 'delivery', 'customer'],
+    });
+  });
+
+  it('should update order transaction successfully', async () => {
+    // Arrange
+    const id = 1;
+    const orderTransaction: Partial<OrderTransactionEntity> = {
+      id,
+    };
+    jest.spyOn(repository, 'update').mockResolvedValue(undefined);
+    jest
+      .spyOn(repository, 'findOne')
+      .mockResolvedValue(orderTransaction as OrderTransactionEntity);
+
+    // Act
+    const result = await orderTransactionRepository.updateOrderTransaction(
+      id,
+      orderTransaction,
+    );
+
+    // Assert
+    expect(result).toEqual(orderTransaction);
+    expect(repository.update).toHaveBeenCalledWith(id, orderTransaction);
+    expect(repository.findOne).toHaveBeenCalledWith({
+      where: { id },
+      relations: ['status', 'product', 'delivery'],
+    });
+  });
 });
