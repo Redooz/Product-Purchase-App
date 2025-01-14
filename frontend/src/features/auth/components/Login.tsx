@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selecteCurrentToken, setCredentials } from '../authSlice';
 import { useLoginMutation } from '../authApiSlice';
 import { LoginRequest } from '../dto/request/loginRequest';
-import './styles/Login.scss';
+import './styles/FormContainer.scss';
 
 const Login = () => {
   const emailRef = useRef<HTMLInputElement>(null);
@@ -72,10 +72,10 @@ const Login = () => {
     setPassword(e.target.value);
   };
 
-  const content = isLoading ? (
+  return isLoading ? (
     <h1>Loading...</h1>
   ) : (
-    <section className="login">
+    <section className="form-container">
       <h1>Login</h1>
 
       <form onSubmit={handleSubmit}>
@@ -100,6 +100,10 @@ const Login = () => {
         <button>Sign In</button>
       </form>
 
+      <a className="link" href="/signup">
+        <p>Dont have an account?</p>
+      </a>
+
       <p
         ref={errRef}
         className={errorMessage ? 'error-message' : 'offscreen'}
@@ -109,8 +113,6 @@ const Login = () => {
       </p>
     </section>
   );
-
-  return content;
 };
 
 export default Login;

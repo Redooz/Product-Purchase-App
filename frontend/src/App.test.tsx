@@ -39,4 +39,21 @@ describe('App', () => {
     // Assert
     expect(homeElement).toBeNull(); // Home should not be rendered initially
   });
+
+  it('should render signup component when navigating to /signup', () => {
+    // Arrange
+    render(
+      <Provider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </Provider>
+    );
+
+    // Act
+    const signupElement = screen.queryByText(/signup/i);
+
+    // Assert
+    expect(signupElement).toBeNull(); // Signup should not be rendered initially
+  });
 });

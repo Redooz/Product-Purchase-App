@@ -3,6 +3,7 @@ import Layout from "./components/Layout"
 import Login from "./features/auth/components/Login"
 import RequireAuth from "./features/auth/components/RequireAuth"
 import Home from "./features/auth/components/Home"
+import SignUp from './features/auth/components/SignUp';
 
 const App = () => {
   return (
@@ -10,6 +11,7 @@ const App = () => {
       <Route path="/" element={<Layout />} />
       {/* public routes */}
       <Route index element={<Login />} />
+      <Route path="signup" element={<SignUp />} />
 
       {/* protected routes */}
       <Route element={<RequireAuth />}>

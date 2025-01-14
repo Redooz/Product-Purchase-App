@@ -6,7 +6,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
 import Login from './Login';
 import { authApiSlice } from '../authApiSlice';
-import authReducer, { setCredentials } from '../authSlice';
+import authReducer from '../authSlice';
 import { ReactElement } from 'react';
 
 // Mock useNavigate

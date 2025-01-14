@@ -1,4 +1,4 @@
-.login {
+.form-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,7 +39,18 @@
   button:hover {
     background-color: darkgreen;
   }
-  
+
+  link {
+    margin-top: 0.625rem; // 10px
+    border: 1px solid #ccc;
+    border-radius: 0.3125rem; // 5px
+  }
+
+  .success-message {
+    color: green;
+    margin-bottom: 0.625rem; // 10px
+  }
+
   .error-message {
     color: red;
     margin-bottom: 0.625rem; // 10px
