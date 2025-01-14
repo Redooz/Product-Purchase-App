@@ -19,6 +19,7 @@ export function generateProducts(count: number): Product[] {
       image: faker.image.urlPicsumPhotos({
         width: 200,
         height: 200,
+        blur: 0,
       }),
     });
   }
