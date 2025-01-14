@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect, FormEvent, ChangeEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useRegisterMutation } from '../authApiSlice';
 import { SignupRequest } from '../dto/request/signupRequest';
 import './styles/FormContainer.scss';
@@ -121,9 +121,7 @@ const SignUp = () => {
         <button>Register</button>
       </form>
 
-      <a className="link" href="/">
-        <p>Already have an account?</p>
-      </a>
+      <Link className="link" to={'/'}>Already have an account?</Link>
 
       <p
         ref={errRef}

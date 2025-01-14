@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
 import { selecteCurrentToken, setCredentials } from '../authSlice';
 import { useLoginMutation } from '../authApiSlice';
@@ -100,9 +100,7 @@ const Login = () => {
         <button>Sign In</button>
       </form>
 
-      <a className="link" href="/signup">
-        <p>Dont have an account?</p>
-      </a>
+      <Link className="link" to={'/signup'}>Don't have an account?</Link>
 
       <p
         ref={errRef}
