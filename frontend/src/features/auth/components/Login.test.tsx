@@ -11,9 +11,13 @@ import { ReactElement } from 'react';
 
 // Mock useNavigate
 const mockNavigate = vi.fn();
-vi.mock('react-router', () => ({
-  useNavigate: () => mockNavigate,
-}));
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
+});
 
 // Setup store
 const setupStore = () => {

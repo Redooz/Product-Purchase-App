@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router"
 import Layout from "./components/Layout"
 import Login from "./features/auth/components/Login"
 import RequireAuth from "./features/auth/components/RequireAuth"
-import Home from "./features/auth/components/Home"
+import Home from "./features/product/components/Home"
 import SignUp from './features/auth/components/SignUp';
 
 const App = () => {

@@ -25,6 +25,7 @@ export default defineConfig({
         '**/dto/*',
         '**/type/*',
         '**/main.tsx',
+        '**/.vite',
       ],
     },
   },
