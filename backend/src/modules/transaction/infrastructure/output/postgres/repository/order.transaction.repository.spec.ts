@@ -124,4 +124,16 @@ describe('OrderTransactionRepository', () => {
       relations: ['status', 'product', 'delivery'],
     });
   });
+
+  it('should delete order transaction successfully', async () => {
+    // Arrange
+    const id = 1;
+    jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
+
+    // Act
+    await orderTransactionRepository.deleteOrderTransaction(id);
+
+    // Assert
+    expect(repository.delete).toHaveBeenCalledWith(id);
+  });
 });

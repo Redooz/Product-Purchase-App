@@ -72,6 +72,7 @@ describe('TransactionUsecase', () => {
             getAllPendingOrderTransactionsByCustomerId: jest.fn(),
             getTransactionById: jest.fn(),
             updateOrderTransaction: jest.fn(),
+            deleteOrderTransaction: jest.fn(),
           },
         },
         {
@@ -341,5 +342,98 @@ describe('TransactionUsecase', () => {
     await expect(
       transactionUsecase.finishTransactionWithCard(transactionId, card),
     ).rejects.toThrow(ProductQuantityNotAvailableError);
+  });
+
+  it('should delete a transaction successfully', async () => {
+    // Arrange
+    const transactionId = 1;
+    const customerId = 1;
+    const transaction: OrderTransaction = {
+      id: transactionId,
+      customer: { id: customerId },
+      product: { id: 1, stock: 10, price: 100 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 1, name: Status.PENDING },
+      createdAt: new Date(),
+    } as OrderTransaction;
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(transaction);
+
+    // Act
+    await transactionUsecase.deleteOrderTransaction(transactionId, customerId);
+
+    // Assert
+    expect(
+      transactionPersistencePort.deleteOrderTransaction,
+    ).toHaveBeenCalledWith(transactionId);
+  });
+
+  it('should throw TransactionNotFoundError if transaction does not exist', async () => {
+    // Arrange
+    const transactionId = 999;
+    const customerId = 1;
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(null);
+
+    // Act & Assert
+    await expect(
+      transactionUsecase.deleteOrderTransaction(transactionId, customerId),
+    ).rejects.toThrow(TransactionNotFoundError);
+  });
+
+  it('should throw TransactionNotFoundError if transaction does not belong to customer', async () => {
+    // Arrange
+    const transactionId = 1;
+    const customerId = 999;
+    const transaction: OrderTransaction = {
+      id: transactionId,
+      customer: { id: 1 },
+      product: { id: 1, stock: 10, price: 100 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 1, name: Status.PENDING },
+      createdAt: new Date(),
+    } as OrderTransaction;
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(transaction);
+
+    // Act & Assert
+    await expect(
+      transactionUsecase.deleteOrderTransaction(transactionId, customerId),
+    ).rejects.toThrow(TransactionNotFoundError);
+  });
+
+  it('should throw TransactionAlreadyFinishedError if transaction is not pending', async () => {
+    // Arrange
+    const transactionId = 1;
+    const customerId = 1;
+    const transaction: OrderTransaction = {
+      id: transactionId,
+      customer: { id: customerId },
+      product: { id: 1, stock: 10, price: 100 },
+      quantity: 2,
+      total: 200,
+      delivery: { fee: 5 },
+      status: { id: 2, name: Status.APPROVED },
+      createdAt: new Date(),
+    } as OrderTransaction;
+
+    jest
+      .spyOn(transactionPersistencePort, 'getTransactionById')
+      .mockResolvedValue(transaction);
+
+    // Act & Assert
+    await expect(
+      transactionUsecase.deleteOrderTransaction(transactionId, customerId),
+    ).rejects.toThrow(TransactionAlreadyFinishedError);
   });
 });

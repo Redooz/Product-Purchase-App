@@ -15,4 +15,6 @@ export abstract class TransactionPersistencePort {
     id: number,
     orderTransaction: Partial<OrderTransaction>,
   ): Promise<OrderTransaction>;
+
+  abstract deleteOrderTransaction(id: number): Promise<void>;
 }
