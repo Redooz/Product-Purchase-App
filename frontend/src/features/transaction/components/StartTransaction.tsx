@@ -129,6 +129,7 @@ const StartTransaction: React.FC = () => {
             placeholder="Product Quantity"
             value={formData.quantity}
             onChange={handleQuantityChange}
+            aria-label="Product Quantity"
             required
           />
           <h4>Delivery Information</h4>
@@ -138,6 +139,7 @@ const StartTransaction: React.FC = () => {
             placeholder="Person Name"
             value={formData.deliveryInfo?.personName || ''}
             onChange={handleChange}
+            aria-label="Person Name"
             required
           />
           <input
@@ -146,6 +148,7 @@ const StartTransaction: React.FC = () => {
             placeholder="Address"
             value={formData.deliveryInfo?.address || ''}
             onChange={handleChange}
+            aria-label="Address"
             required
           />
           <input
@@ -154,6 +157,7 @@ const StartTransaction: React.FC = () => {
             placeholder="Region"
             value={formData.deliveryInfo?.region || ''}
             onChange={handleChange}
+            aria-label="Region"
             required
           />
           <input
@@ -162,6 +166,7 @@ const StartTransaction: React.FC = () => {
             placeholder="City"
             value={formData.deliveryInfo?.city || ''}
             onChange={handleChange}
+            aria-label="City"
             required
           />
           <input
@@ -170,6 +175,7 @@ const StartTransaction: React.FC = () => {
             placeholder="Postal Code"
             value={formData.deliveryInfo?.postalCode || ''}
             onChange={handleChange}
+            aria-label="Postal Code"
             required
           />
           <input
@@ -178,6 +184,7 @@ const StartTransaction: React.FC = () => {
             placeholder="Phone Number"
             value={formData.deliveryInfo?.phoneNumber || ''}
             onChange={handleChange}
+            aria-label="Phone Number"
             required
           />
           <button type="submit" disabled={isLoading}>

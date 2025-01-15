@@ -3,12 +3,12 @@ export interface StartTransactionResponse {
   total: number;
   status: string;
   deliveryFee: number;
-  endUserPolicy: {
+  endUserPolicy?: {
     acceptanceToken: string;
     permalink: string;
     type: string;
   };
-  personalDataAuthorization: {
+  personalDataAuthorization?: {
     acceptanceToken: string;
     permalink: string;
     type: string;
