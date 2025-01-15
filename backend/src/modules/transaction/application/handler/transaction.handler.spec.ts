@@ -24,6 +24,7 @@ describe('TransactionHandler', () => {
             startTransaction: jest.fn(),
             getAllPendingOrderTransactionsByCustomerId: jest.fn(),
             finishTransactionWithCard: jest.fn(),
+            deleteOrderTransaction: jest.fn(),
           },
         },
       ],
@@ -220,5 +221,26 @@ describe('TransactionHandler', () => {
 
     // Assert
     expect(result).toEqual(finishTransactionResponse);
+  });
+
+  it('should delete a transaction successfully', async () => {
+    // Arrange
+    const request = {
+      user: { sub: 1 },
+    } as unknown as Request;
+    const transactionId = 1;
+
+    jest
+      .spyOn(transactionServicePort, 'deleteOrderTransaction')
+      .mockResolvedValue();
+
+    // Act
+    await transactionHandler.deleteTransaction(transactionId, request);
+
+    // Assert
+    expect(transactionServicePort.deleteOrderTransaction).toHaveBeenCalledWith(
+      transactionId,
+      1,
+    );
   });
 });

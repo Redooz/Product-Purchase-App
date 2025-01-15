@@ -87,6 +87,17 @@ export class TransactionHandler {
     };
   }
 
+  async deleteTransaction(
+    transactionId: number,
+    request: Request,
+  ): Promise<void> {
+    const { sub } = request.user as PayloadToken;
+    await this.transactionServicePort.deleteOrderTransaction(
+      transactionId,
+      sub,
+    );
+  }
+
   async getAllPendingOrderTransactions(
     request: Request,
   ): Promise<GetTransactionResponse[]> {

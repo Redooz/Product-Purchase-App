@@ -135,4 +135,40 @@ describe('TransactionExceptionHandler', () => {
       'ProductExceptionHandler',
     );
   });
+
+  it('should throw NotFoundException for TransactionNotFoundError in handleDeleteTransaction', () => {
+    // Arrange
+    const error = new TransactionNotFoundError('1');
+
+    // Act and Assert
+    expect(() =>
+      transactionExceptionHandler.handleDeleteTransaction(error),
+    ).toThrow(NotFoundException);
+  });
+
+  it('should throw BadRequestException for TransactionAlreadyFinishedError in handleDeleteTransaction', () => {
+    // Arrange
+    const error = new TransactionAlreadyFinishedError(1);
+
+    // Act and Assert
+    expect(() =>
+      transactionExceptionHandler.handleDeleteTransaction(error),
+    ).toThrow(BadRequestException);
+  });
+
+  it('should log and rethrow unexpected errors in handleDeleteTransaction', () => {
+    // Arrange
+    const error = new Error('Unexpected error');
+    const loggerSpy = jest.spyOn(Logger, 'error').mockImplementation();
+
+    // Act and Assert
+    expect(() =>
+      transactionExceptionHandler.handleDeleteTransaction(error),
+    ).toThrow(Error);
+    expect(loggerSpy).toHaveBeenCalledWith(
+      'Unexpected error',
+      error.stack,
+      'ProductExceptionHandler',
+    );
+  });
 });

@@ -160,4 +160,8 @@ export class TransactionPersistenceAdapter extends TransactionPersistencePort {
       },
     };
   }
+
+  override async deleteOrderTransaction(id: number): Promise<void> {
+    await this.orderTransactionRepository.deleteOrderTransaction(id);
+  }
 }

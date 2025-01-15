@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import authReducer, {
   setCredentials,
   logout,
-  selecteCurrentToken,
+  selectedCurrentToken,
 } from './authSlice';
 import { AuthState } from './type/authState';
 
@@ -32,12 +32,12 @@ describe('authSlice', () => {
 
   it('should select the current token', () => {
     store.dispatch(setCredentials({ token: 'test-token' }));
-    const token = selecteCurrentToken((store.getState() as any));
+    const token = selectedCurrentToken((store.getState() as any));
     expect(token).toBe('test-token');
   });
 
   it('should return null token if not set', () => {
-    const token = selecteCurrentToken((store.getState() as any));
+    const token = selectedCurrentToken((store.getState() as any));
     expect(token).toBeNull();
   });
 });

@@ -26,6 +26,7 @@ describe('TransactionController', () => {
             startTransaction: jest.fn(),
             getAllPendingOrderTransactions: jest.fn(),
             finishTransaction: jest.fn(),
+            deleteTransaction: jest.fn(),
           },
         },
         {
@@ -34,6 +35,7 @@ describe('TransactionController', () => {
             handleStartTransaction: jest.fn(),
             handleGetAllPendingTransactions: jest.fn(),
             handleFinishTransaction: jest.fn(),
+            handleDeleteTransaction: jest.fn(),
           },
         },
       ],
@@ -250,5 +252,20 @@ describe('TransactionController', () => {
 
     // Assert
     expect(exceptionHandler.handleFinishTransaction).toHaveBeenCalled();
+  });
+
+  it('should delete a transaction successfully', async () => {
+    // Arrange
+    const req = {} as Request;
+    const transactionId = 1;
+
+    // Act
+    await transactionController.deleteTransaction(transactionId, req);
+
+    // Assert
+    expect(transactionHandler.deleteTransaction).toHaveBeenCalledWith(
+      transactionId,
+      req,
+    );
   });
 });

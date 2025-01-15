@@ -1,8 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransactionPersistenceAdapter } from './transaction.persistence.adapter';
-import {
-  OrderTransactionRepository
-} from '@/transaction/infrastructure/output/postgres/repository/order.transaction.repository';
+import { OrderTransactionRepository } from '@/transaction/infrastructure/output/postgres/repository/order.transaction.repository';
 import { OrderTransaction } from '@/transaction/domain/model/order.transaction';
 import { OrderTransactionEntity } from '@/transaction/infrastructure/output/postgres/entity/order.transaction.entity';
 import { Status } from '@/transaction/domain/model/enum/status';
@@ -23,6 +21,7 @@ describe('TransactionPersistenceAdapter', () => {
             getAllPendingOrderTransactionsByCustomerId: jest.fn(),
             getOrderTransactionById: jest.fn(),
             updateOrderTransaction: jest.fn(),
+            deleteOrderTransaction: jest.fn(),
           },
         },
       ],
@@ -233,5 +232,20 @@ describe('TransactionPersistenceAdapter', () => {
         type: 'END_USER_POLICY',
       },
     });
+  });
+
+  it('should delete an order transaction successfully', async () => {
+    // Arrange
+    const transactionId = 1;
+    jest
+      .spyOn(orderTransactionRepository, 'deleteOrderTransaction')
+      .mockResolvedValue(undefined);
+
+    await transactionPersistenceAdapter.deleteOrderTransaction(transactionId);
+
+    // Assert
+    expect(
+      orderTransactionRepository.deleteOrderTransaction,
+    ).toHaveBeenCalledWith(transactionId);
   });
 });

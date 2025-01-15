@@ -119,6 +119,28 @@ export class TransactionUsecase extends TransactionServicePort {
     );
   }
 
+  override async deleteOrderTransaction(
+    id: number,
+    customerId: number,
+  ): Promise<void> {
+    const transaction =
+      await this.transactionPersistencePort.getTransactionById(id);
+
+    if (!transaction) {
+      throw new TransactionNotFoundError(id.toString());
+    }
+
+    if (transaction.customer.id !== customerId) {
+      throw new TransactionNotFoundError(id.toString());
+    }
+
+    if (transaction.status.name !== Status.PENDING) {
+      throw new TransactionAlreadyFinishedError(id);
+    }
+
+    await this.transactionPersistencePort.deleteOrderTransaction(id);
+  }
+
   override async finishTransactionWithCard(
     id: number,
     card: Card,

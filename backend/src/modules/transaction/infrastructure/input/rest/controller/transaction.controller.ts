@@ -1,10 +1,21 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import {
   ApiTags,
   ApiOperation,
   ApiResponse,
   ApiBearerAuth,
   ApiBody,
+  ApiParam,
 } from '@nestjs/swagger';
 import { TransactionHandler } from '@/transaction/application/handler/transaction.handler';
 import { Request } from 'express';
@@ -86,6 +97,25 @@ export class TransactionController {
       return await this.transactionHandler.getAllPendingOrderTransactions(req);
     } catch (error) {
       this.exceptionHandler.handleGetAllPendingTransactions(error);
+    }
+  }
+
+  @Delete('/:transactionId')
+  @ApiOperation({ summary: 'Delete a transaction' })
+  @ApiParam({ name: 'transactionId', required: true })
+  @ApiResponse({ status: 204, description: 'Transaction deleted successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  @HttpCode(204)
+  async deleteTransaction(
+    @Param('transactionId') transactionId: number,
+    @Req() req: Request,
+  ) {
+    try {
+      await this.transactionHandler.deleteTransaction(transactionId, req);
+    } catch (error) {
+      this.exceptionHandler.handleDeleteTransaction(error);
     }
   }
 }

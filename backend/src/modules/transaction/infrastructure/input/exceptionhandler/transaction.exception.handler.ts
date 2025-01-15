@@ -50,4 +50,20 @@ export class TransactionExceptionHandler {
         throw error;
     }
   }
+
+  handleDeleteTransaction(error: Error) {
+    switch (error.constructor.name) {
+      case 'TransactionNotFoundError':
+        throw new NotFoundException(error.message);
+      case 'TransactionAlreadyFinishedError':
+        throw new BadRequestException(error.message);
+      default:
+        Logger.error(
+          'Unexpected error',
+          error.stack,
+          ProductExceptionHandler.name,
+        );
+        throw error;
+    }
+  }
 }
