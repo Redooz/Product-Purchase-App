@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useDispatch, useSelector } from 'react-redux';
-import { selecteCurrentToken, setCredentials } from '../authSlice';
+import { selectedCurrentToken, setCredentials } from '../authSlice';
 import { useLoginMutation } from '../authApiSlice';
 import { LoginRequest } from '../dto/request/loginRequest';
 import './styles/FormContainer.scss';
@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>('');
   const navigate = useNavigate();
-  const token = useSelector(selecteCurrentToken);
+  const token = useSelector(selectedCurrentToken);
 
   const [login, { isLoading }] = useLoginMutation();
   const dispatch = useDispatch();

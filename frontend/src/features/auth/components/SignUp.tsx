@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router';
 import { useRegisterMutation } from '../authApiSlice';
 import { SignupRequest } from '../dto/request/signupRequest';
 import './styles/FormContainer.scss';
-import { selecteCurrentToken } from '../authSlice';
+import { selectedCurrentToken } from '../authSlice';
 import { useSelector } from 'react-redux';
 
 const SignUp = () => {
@@ -14,7 +14,7 @@ const SignUp = () => {
   const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>('');
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const token = useSelector(selecteCurrentToken);
+  const token = useSelector(selectedCurrentToken);
   const navigate = useNavigate();
 
   const [register, { isLoading }] = useRegisterMutation();

@@ -64,4 +64,18 @@
       }
     }
   }
+
+  .remove-button {
+    padding: 0.625rem; // 10px
+    border: none;
+    border-radius: 0.3125rem; // 5px
+    background-color: red;
+    color: white;
+    cursor: pointer;
+    margin-top: 0.625rem; // 10px
+
+    &:hover {
+      background-color: darkred;
+    }
+  }
 }

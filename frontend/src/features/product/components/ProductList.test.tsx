@@ -7,6 +7,7 @@ import { productApiSlice } from '../productApiSlice';
 import ProductList from './ProductList';
 import { GetProductResponse } from '../dto/response/getProductResponse';
 import authReducer from '../../auth/authSlice';
+import pendingLocalTransactionsReducer from '../../transaction/pendingLocalTransactionsSlice';
 
 // Mock useGetProductsQuery
 const mockUseGetProductsQuery = vi.fn();
@@ -23,7 +24,8 @@ const setupStore = () => {
   return configureStore({
     reducer: {
       [productApiSlice.reducerPath]: productApiSlice.reducer,
-      auth: authReducer, // Add the auth reducer
+      auth: authReducer,
+      pendingLocalTransactions: pendingLocalTransactionsReducer,
     },
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware().concat(productApiSlice.middleware),

@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
-import { selecteCurrentToken } from "../authSlice";
+import { selectedCurrentToken } from "../authSlice";
 import { Navigate, Outlet, useLocation } from "react-router";
 
 const RequireAuth = () => {
-  const token = useSelector(selecteCurrentToken);
+  const token = useSelector(selectedCurrentToken);
   const location = useLocation();
 
   return (
