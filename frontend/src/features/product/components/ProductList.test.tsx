@@ -324,7 +324,7 @@ describe('ProductList Component', () => {
       const continueButton = screen.getByText('Continue with card details');
       continueButton.click();
 
-      expect(mockUseNavigate).toHaveBeenCalledWith('/finish-transaction?transactionId=1');
+      expect(mockUseNavigate).toHaveBeenCalledWith('/checkout?transactionId=1');
     });
   });
 

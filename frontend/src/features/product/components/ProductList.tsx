@@ -32,7 +32,7 @@ const ProductList: React.FC = () => {
   };
 
   const handleFinishTransaction = (transactionId: number) => {
-    navigate(`/finish-transaction?transactionId=${transactionId}`);
+    navigate(`/checkout?transactionId=${transactionId}`);
   };
 
   const handleRemoveTransaction = (productId: number) => {
@@ -93,7 +93,9 @@ const ProductList: React.FC = () => {
               onClick={async () => {
                 if (serverPendingTransaction) {
                   await handleCancelServerTransaction(serverPendingTransaction.id);
-                } else {
+                }
+
+                if (pendingLocalTransaction) {
                   handleRemoveTransaction(product.id);
                 }
               }}
@@ -103,6 +105,7 @@ const ProductList: React.FC = () => {
             </button>
           </>
         ) : (
+
           <button
             onClick={() => handleStartTransaction(product.id)}
             className="pay-button"

@@ -2,6 +2,8 @@ import { apiSlice } from '../../app/api/apiSlice';
 import { GetTransactionResponse } from './dto/response/getTransactionResponse';
 import { StartTransactionResponse } from './dto/response/startTransactionResponse';
 import { StartTransactionRequest } from './dto/request/startTransactionRequest';
+import { FinishTransactionRequest } from './dto/request/finishTransactionRequest';
+import { FinishTransactionResponse } from './dto/response/finishTransactionResponse';
 
 export const transactionApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -24,6 +26,17 @@ export const transactionApiSlice = apiSlice.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    finishTransaction: builder.mutation<FinishTransactionResponse, FinishTransactionRequest>({
+      query: (request: FinishTransactionRequest) => ({
+        url: '/transactions/finish',
+        method: 'POST',
+        body: request,
+      }),
+    }),
+    getTransactionDetails: builder.query<FinishTransactionResponse, number>({
+      query: (id: number) => `/transactions/${id}`,
+      keepUnusedDataFor: 0,
+    }),
   }),
 });
 
@@ -31,4 +44,6 @@ export const {
   useGetPendingTransactionsQuery,
   useStartTransactionMutation,
   useDeleteTransactionMutation,
+  useFinishTransactionMutation,
+  useGetTransactionDetailsQuery,
 } = transactionApiSlice;

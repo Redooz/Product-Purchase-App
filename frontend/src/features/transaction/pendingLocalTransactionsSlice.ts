@@ -24,6 +24,10 @@ const pendingLocalTransactionsSlice = createSlice({
 
       if (!existingTransaction) {
         state.localTransactions.push(payload);
+      } else {
+        state.localTransactions = state.localTransactions.map(transaction =>
+          transaction.productId === payload.productId ? payload : transaction,
+        );
       }
     },
     removeTransaction(

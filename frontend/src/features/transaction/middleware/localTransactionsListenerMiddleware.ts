@@ -1,5 +1,6 @@
 import { createListenerMiddleware } from '@reduxjs/toolkit';
 import { addTransaction, removeTransaction, selectPendingLocalTransactions } from '../pendingLocalTransactionsSlice';
+
 const localTransactionsListenerMiddleware = createListenerMiddleware();
 
 const updateLocalStorage = (listenerApi: any) => {
