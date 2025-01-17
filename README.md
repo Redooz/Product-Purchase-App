@@ -89,11 +89,11 @@ This repository contains the implementation of a Product Purchase System, showca
 ## **Backend and Frontend Coverage**
 ### **Backend Test Coverage**
 ![Backend Coverage](./img/Testing%20Backend.jpeg)  
-*Add the backend coverage image here.*
+*Click for a larger view of the backend coverage image.*
 
 ### **Frontend Test Coverage**
 ![Frontend Coverage](./img/Testing%20Frontend.png)  
-*Add the frontend coverage image here.*
+*Click for a larger view of the frontend coverage image.*
 
 ---
 
