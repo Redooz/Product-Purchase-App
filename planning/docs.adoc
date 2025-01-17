@@ -1,0 +1,229 @@
+= SPEC-1: Product Purchase App with Payment Integration
+:sectnums:
+:toc:
+
+== Background
+
+The business aims to streamline the process of selling a specific product using Wompi as the payment gateway. The proposed solution includes an application to handle the entire transaction lifecycle. This lifecycle begins with showing product availability, collecting customer details, processing payment via Wompi, updating stock and transaction records, and delivering results to the customer. A robust backend and user interface will ensure seamless transactions and recovery from client-side interruptions.
+
+== Requirements
+
+The application must fulfill the following requirements, categorized using MoSCoW prioritization:  
+
+=== Must Have  
+- Display a user interface showing available products, their descriptions, prices, and stock levels.  
+- Provide a payment type button ("Pay with credit card") and a modal for credit card information collection.  
+- Validate credit card data format, ensuring compliance with common structures (e.g., MasterCard, VISA).  
+- Collect delivery information from the customer.  
+- Summarize the payment details, including product amount, base fee, and delivery fee, with a payment button.  
+- Implement backend APIs to:  
+  - Create transactions with a "PENDING" state.  
+  - Call Wompi API to process payments.  
+  - Update transaction status (e.g., SUCCESS, FAILURE) upon receiving Wompi's response.  
+  - Assign the purchased product to the customer and update product stock levels.  
+- Show the result of the transaction to the customer and refresh the product page with updated stock.  
+- Ensure application resilience to recover user progress upon refresh.  
+
+=== Should Have  
+- Detect credit card type (e.g., MasterCard, VISA) dynamically with corresponding logos in the modal.  
+
+=== Could Have  
+- A polished user interface with animations for modals and backdrops for enhanced user experience.  
+
+=== Won't Have  
+- Support for multiple payment gateways (only Wompi will be integrated).  
+- Multi-language support.  
+
+== Method
+
+To address the requirements, the system will be built with the following components and technologies:
+
+=== Architecture Overview  
+The application will follow a client-server architecture:  
+- **Frontend**: A React-based single-page application (SPA) to handle UI and user interactions.  
+- **Backend**: A NestJS API to handle business logic, database interactions, and external API communication (e.g., Wompi).  
+- **Database**: A PostgreSQL database to store product stock, transaction data, customer details, and delivery records.  
+
+== Method
+
+To address the requirements, the system will be built with the following components and technologies:
+
+=== Architecture Overview  
+The application will follow a client-server architecture:  
+- **Frontend**: A React-based single-page application (SPA) to handle UI and user interactions.  
+- **Backend**: A Node.js/Express API to handle business logic, database interactions, and external API communication (e.g., Wompi).  
+- **Database**: A PostgreSQL database to store product stock, transaction data, customer details, and delivery records.  
+
+=== Workflow  
+[plantuml]
+----
+@startuml
+actor Customer
+entity "Frontend App" as Frontend
+entity "Backend API" as Backend
+entity "Wompi Payment API" as Wompi
+database "Database" as DB
+
+Customer -> Frontend: View product page
+Frontend -> Backend: Fetch product details
+Backend -> DB: Query product stock
+
+Customer -> Frontend: Click "Pay with Credit Card"
+Frontend -> Frontend: Open modal for payment & delivery details
+Customer -> Frontend: Enter payment & delivery details
+Frontend -> Backend: Submit transaction request
+
+Backend -> DB: Create pending transaction
+Backend -> Wompi: Process payment
+Wompi -> Backend: Return payment status
+Backend -> DB: Update transaction status
+Backend -> DB: Update product stock & assign product
+Backend -> Frontend: Return payment result
+Frontend -> Customer: Show transaction result
+Frontend -> Backend: Refresh product page
+----
+
+=== Backend API Design  
+The backend will provide the following endpoints:  
+
+- **GET /products**: Fetch list of products with stock, price, and description.  
+- **POST /transactions**: Create a new transaction with "PENDING" status.  
+  - Request: `{ customerId, productId, quantity, deliveryDetails }`  
+  - Response: `{ transactionId }`  
+- **POST /transactions/{transactionId}/payment**: Process payment with Wompi and update the transaction status.  
+  - Request: `{ creditCardDetails }`  
+  - Response: `{ status, message }`  
+  - Logic:  
+    - Call Wompi API to process the payment.  
+    - Update the transaction status (e.g., "SUCCESS", "FAILED") based on the Wompi response.  
+    - If successful, reduce stock for the purchased product and assign it to the customer.  
+
+- **GET /transactions/{transactionId}**: Retrieve transaction details.  
+
+=== Database Schema  
+- **products**:  
+  - `id`: Integer, Primary Key  
+  - `name`: Text  
+  - `description`: Text  
+  - `price`: Decimal  
+  - `stock`: Integer  
+
+- **transactions**:  
+  - `id`: Integer, Primary Key  
+  - `productId`: Foreign Key -> products(id)  
+  - `customerId`: Foreign Key -> customers(id)  
+  - `quantity`: Integer  
+  - `status`: Text (e.g., "PENDING", "SUCCESS", "FAILED")  
+  - `createdAt`: Timestamp  
+
+- **customers**:  
+  - `id`: Integer, Primary Key  
+  - `name`: Text  
+  - `email`: Text  
+
+- **deliveries**:  
+  - `id`: Integer, Primary Key  
+  - `transactionId`: Foreign Key -> transactions(id)  
+  - `address`: Text  
+  - `deliveryFee`: Decimal  
+
+=== Resilience Features  
+- Frontend will use localStorage/sessionStorage to save customer input data (e.g., payment and delivery info) to recover progress after a page refresh.  
+- Backend will store transaction states, ensuring any failed or incomplete transactions can be retried.  
+
+=== Integration with Wompi API  
+The backend will call Wompi's API to process payments and handle responses for success or failure. Webhooks from Wompi will be supported to update transaction status asynchronously if needed.  
+
+The backend will call Wompi's API to process payments and handle responses for success or failure. Webhooks from Wompi will be supported to update transaction status asynchronously if needed.  
+
+== Implementation
+
+The implementation will follow these steps to ensure the system functions as designed:  
+
+=== Step 1: Backend Development  
+1. Set up the project environment using Node.js and Express.  
+2. Configure a PostgreSQL database with the specified schema.  
+3. Create API endpoints:  
+   - **GET /products**: Implement logic to fetch and return product data from the database.  
+   - **POST /transactions**: Implement logic to create a transaction in the database with "PENDING" status.  
+   - **POST /transactions/{transactionId}/payment**:  
+     - Integrate with the Wompi API for payment processing.  
+     - Update the transaction status in the database based on Wompi's response.  
+     - Deduct stock for the purchased product and link the product to the transaction.  
+   - **GET /transactions/{transactionId}**: Implement logic to retrieve and return transaction details.  
+
+4. Test API endpoints using tools like Postman.  
+5. Secure sensitive data and API keys using environment variables and proper authentication.  
+
+=== Step 2: Frontend Development  
+1. Create a React-based single-page application (SPA).  
+2. Design and implement pages and components:  
+   - Product listing page: Fetch and display product details using the `/products` API.  
+   - Payment modal: Include fields for credit card details and delivery information.  
+     - Implement client-side validation for credit card structure.  
+     - Show credit card type logos dynamically (e.g., VISA, MasterCard).  
+   - Payment summary modal: Display product amount, base fee, and delivery fee.  
+   - Transaction result page: Show the outcome of the payment process.  
+
+3. Use localStorage/sessionStorage to save user progress and recover data after a page refresh.  
+4. Test UI components thoroughly with mock APIs.  
+
+=== Step 3: Testing and Quality Assurance  
+1. Perform end-to-end testing with mock data for various scenarios:  
+   - Valid and invalid credit card details.  
+   - Successful and failed transactions.  
+   - Stock updates after successful transactions.  
+2. Conduct resilience tests by refreshing the page during various stages of the process.  
+
+=== Step 4: Deployment  
+1. Deploy the backend to a cloud platform (e.g., AWS, Heroku) with PostgreSQL configured.  
+2. Deploy the frontend to a platform like Vercel or Netlify.  
+3. Ensure environment variables for Wompi API keys and database credentials are configured securely.  
+4. Set up monitoring tools to track API performance and errors.  
+
+=== Step 5: Documentation  
+1. Create API documentation using tools like Swagger or Postman Collections.  
+2. Document the frontend and backend setup for developers.  
+
+=== Step 6: User Feedback and Iteration  
+1. Release the app to a test audience.  
+2. Gather feedback on usability and functionality.  
+3. Prioritize updates based on user input.  
+
+== Milestones
+
+The project will be completed in one week, with tasks distributed as follows:  
+
+=== Day 1: Backend Setup  
+- Configure the backend environment with NestJS.  
+- Set up the PostgreSQL database with the required schema.  
+- Implement basic API endpoints for product retrieval and transaction creation.  
+- Test endpoints using mock data.  
+
+=== Day 2: Frontend Setup and Product Listing Page  
+- Set up the frontend project using React.  
+- Design and implement the product listing page.  
+- Integrate the backend API to fetch and display product data.  
+
+=== Day 3: Payment and Delivery Modal  
+- Create a modal for collecting credit card and delivery information.  
+- Implement client-side validation for credit card structure and delivery fields.  
+- Add dynamic credit card type detection (e.g., VISA, MasterCard).  
+
+=== Day 4: Payment Integration and Backend Enhancements  
+- Integrate Wompi API for payment processing within the backend.  
+- Complete the `/transactions/{transactionId}/payment` endpoint to handle payments and transaction updates.  
+- Update stock and delivery records upon successful transactions.  
+- Test backend API with Wompi's test environment.  
+
+=== Day 5: Transaction Results and Resilience  
+- Implement the frontend flow to display transaction results to the customer.  
+- Add localStorage/sessionStorage logic to recover progress on page refresh.  
+- Test resilience features across different scenarios.  
+
+=== Day 6 and 7: End-to-End Testing and Deployment  
+- Conduct comprehensive testing for all workflows (product selection, payment, stock updates).  
+- Perform both frontend and backend performance testing.  
+- Deploy the backend and database to a cloud environment.  
+- Deploy the frontend to a hosting platform.  
+- Configure environment variables securely.

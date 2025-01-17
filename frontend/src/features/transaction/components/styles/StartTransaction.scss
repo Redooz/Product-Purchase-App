@@ -1,0 +1,86 @@
+.start-transaction-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    width: 18.75rem; // 300px
+    padding: 1.25rem; // 20px
+    border: 0.0625rem solid #ccc; // 1px
+    border-radius: 0.625rem; // 10px
+    background-color: #fff;
+  }
+
+  label {
+    margin-bottom: 0.3125rem; // 5px
+  }
+
+  input {
+    margin-bottom: 0.9375rem; // 15px
+    padding: 0.625rem; // 10px
+    border: 0.0625rem solid #ccc; // 1px
+    border-radius: 0.3125rem; // 5px
+  }
+
+  button {
+    padding: 0.625rem; // 10px
+    border: none;
+    border-radius: 0.3125rem; // 5px
+    background-color: green;
+    color: white;
+    cursor: pointer;
+
+    :hover {
+      background-color: darkgreen;
+    }
+
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+
+      :hover {
+        background-color: #ccc;
+      }
+    }
+  }
+
+
+  .success-message {
+    color: green;
+    margin-bottom: 0.625rem; // 10px
+  }
+
+  .error-message {
+    color: red;
+    margin-bottom: 0.625rem; // 10px
+  }
+
+  title {
+    text-align: center;
+    margin-bottom: 1.25rem; // 20px
+  }
+
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.25rem; // 20px
+  }
+
+  .step-indicator .dot {
+    height: 0.625rem; // 10px
+    width: 0.625rem; // 10px
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 0.3125rem; // 5px
+  }
+
+  .step-indicator .dot.active {
+    background-color: green;
+  }
+}
