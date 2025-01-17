@@ -190,11 +190,19 @@ describe('TransactionHandler', () => {
       total: 205,
       status: 'PENDING',
       deliveryFee: 5,
+      product: {
+        name: 'Product 1',
+        quantity: 2,
+      },
     };
     const orderTransaction: OrderTransaction = {
       customer: undefined,
-      product: undefined,
-      quantity: 0,
+      product: {
+        name: 'Product 1',
+        price: 100,
+        description: 'Product 1 description',
+      },
+      quantity: 2,
       id: 1,
       total: 205,
       status: { name: Status.PENDING },

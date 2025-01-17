@@ -7,14 +7,17 @@ import {
   addTransaction,
   selectPendingLocalTransactions,
 } from '../pendingLocalTransactionsSlice';
+import { setAcceptance } from '../acceptanceSlice';
 import { useNavigate } from 'react-router';
 import './styles/StartTransaction.scss';
+import { AcceptanceState } from '../type/acceptanceState';
 
 const StartTransaction: React.FC = () => {
   const [searchParams] = useSearchParams();
   const productId = Number(searchParams.get('productId'));
   const [formData, setFormData] = useState<StartTransactionRequest>({
     productId,
+    quantity: undefined,
     deliveryInfo: {
       personName: '',
       address: '',
@@ -97,20 +100,51 @@ const StartTransaction: React.FC = () => {
     }
     try {
       const result = await startTransaction(formData).unwrap();
+
+      const acceptanceState: AcceptanceState = {
+        endUserPolicy: {
+          acceptanceToken: result.endUserPolicy?.acceptanceToken || '',
+          permalink: result.endUserPolicy?.permalink || '',
+          type: 'END_USER_POLICY',
+        },
+        personalDataAuthorization: {
+          acceptanceToken:
+            result.personalDataAuthorization?.acceptanceToken || '',
+          permalink: result.personalDataAuthorization?.permalink || '',
+          type: 'PERSONAL_DATA_AUTH',
+        },
+      };
+
+      dispatch(setAcceptance(acceptanceState));
+
       navigate(`/checkout?transactionId=${result.id}`);
     } catch (error: any) {
+      let errorMsg = '';
+
       setErrorMessage('Failed to start transaction. Please try again.');
       switch (error.status) {
         case 404:
           setErrorMessage('Product not found.');
           break;
         case 400:
-          setErrorMessage('Invalid request. ');
+          error.data.message.forEach((err: string) => {
+            errorMsg += `${err}\n`;
+          })
+          setErrorMessage(errorMsg);
           break;
       }
       console.error('Failed to start transaction:', error);
     }
   };
+
+  const isFormValid =
+    formData.quantity &&
+    formData.deliveryInfo?.personName &&
+    formData.deliveryInfo?.address &&
+    formData.deliveryInfo?.region &&
+    formData.deliveryInfo?.city &&
+    formData.deliveryInfo?.postalCode &&
+    formData.deliveryInfo?.phoneNumber
 
   return (
     <div className="start-transaction-backdrop">
@@ -176,6 +210,7 @@ const StartTransaction: React.FC = () => {
             value={formData.deliveryInfo?.postalCode || ''}
             onChange={handleChange}
             aria-label="Postal Code"
+            min={5}
             required
           />
           <input
@@ -187,7 +222,7 @@ const StartTransaction: React.FC = () => {
             aria-label="Phone Number"
             required
           />
-          <button type="submit" disabled={isLoading}>
+          <button type="submit" disabled={!isFormValid || isLoading}>
             {isLoading ? 'Starting Transaction...' : 'Continue'}
           </button>
         </form>

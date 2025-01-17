@@ -1,5 +1,5 @@
-import { baseQueryWithLogout } from './apiSlice';
-import authReducer from '../../features/auth/authSlice';
+import { baseQueryWithLogout } from '../apiSlice';
+import authReducer from '../../../features/auth/authSlice';
 import { BaseQueryApi } from '@reduxjs/toolkit/query/react';
 import { configureStore } from '@reduxjs/toolkit';
 

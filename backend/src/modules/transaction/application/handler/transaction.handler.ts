@@ -73,17 +73,44 @@ export class TransactionHandler {
     transactionId,
     card,
   }: FinishTransactionRequest): Promise<FinishTransactionResponse> {
-    const response =
+    const transaction =
       await this.transactionServicePort.finishTransactionWithCard(
         transactionId,
         card,
       );
 
     return {
-      id: response.id,
-      total: response.total,
-      status: response.status.name,
-      deliveryFee: response.delivery.fee,
+      id: transaction.id,
+      total: transaction.total,
+      status: transaction.status.name,
+      deliveryFee: transaction.delivery.fee,
+      product: {
+        name: transaction.product.name,
+        quantity: transaction.quantity,
+      },
+    };
+  }
+
+  async getTransactionDetails(
+    transactionId: number,
+    request: Request,
+  ): Promise<FinishTransactionResponse> {
+    const { sub } = request.user as PayloadToken;
+    const transaction =
+      await this.transactionServicePort.getTransactionDetailsById(
+        transactionId,
+        sub,
+      );
+
+    return {
+      id: transaction.id,
+      total: transaction.total,
+      status: transaction.status.name,
+      deliveryFee: transaction.delivery.fee,
+      product: {
+        name: transaction.product.name,
+        quantity: transaction.quantity,
+      },
     };
   }
 

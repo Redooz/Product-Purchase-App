@@ -1,5 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+class ProductDto {
+  @ApiProperty({
+    example: 'Product name',
+    description: 'Product name',
+  })
+  name: string;
+
+  @ApiProperty({
+    example: 2,
+    description: 'Product quantity',
+  })
+  quantity: number;
+}
+
 export class FinishTransactionResponse {
   @ApiProperty({
     example: 1,
@@ -24,4 +38,9 @@ export class FinishTransactionResponse {
     description: 'Delivery fee',
   })
   deliveryFee: number;
+
+  @ApiProperty({
+    type: ProductDto,
+  })
+  product: ProductDto;
 }

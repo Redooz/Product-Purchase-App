@@ -1,11 +1,11 @@
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { store } from '../../../app/store';
-import Home from './Home';
+import { store } from '../../../../app/store';
+import Home from '../Home';
 import { vi } from 'vitest';
 import { useDispatch } from 'react-redux';
-import { logout } from '../../auth/authSlice';
+import { logout } from '../../../auth/authSlice';
 
 vi.mock('react-redux', async () => {
   const actual = await vi.importActual('react-redux');

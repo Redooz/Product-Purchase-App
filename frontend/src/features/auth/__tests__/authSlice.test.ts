@@ -3,8 +3,8 @@ import authReducer, {
   setCredentials,
   logout,
   selectedCurrentToken,
-} from './authSlice';
-import { AuthState } from './type/authState';
+} from '../authSlice';
+import { AuthState } from '../type/authState';
 
 describe('authSlice', () => {
   let store: ReturnType<typeof configureStore>;

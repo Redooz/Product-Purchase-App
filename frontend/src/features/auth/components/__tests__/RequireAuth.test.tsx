@@ -2,8 +2,8 @@ import { render } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { configureStore, EnhancedStore } from '@reduxjs/toolkit';
-import RequireAuth from './RequireAuth';
-import authReducer, { setCredentials } from '../authSlice';
+import RequireAuth from '../RequireAuth';
+import authReducer, { setCredentials } from '../../authSlice';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 describe('RequireAuth Component', () => {

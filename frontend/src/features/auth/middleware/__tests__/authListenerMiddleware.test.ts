@@ -1,5 +1,5 @@
-import { setCredentials, logout } from '../authSlice';
-import authListenerMiddleware from './authListenerMiddleware';
+import { setCredentials, logout } from '../../authSlice';
+import authListenerMiddleware from '../authListenerMiddleware';
 import { configureStore, createAction, EnhancedStore } from '@reduxjs/toolkit';
 
 describe('authListenerMiddleware', () => {

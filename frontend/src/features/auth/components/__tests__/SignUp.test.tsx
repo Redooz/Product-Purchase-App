@@ -2,9 +2,9 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router';
-import SignUp from './SignUp';
-import { authApiSlice } from '../authApiSlice';
-import authReducer from '../authSlice';
+import SignUp from '../SignUp';
+import { authApiSlice } from '../../authApiSlice';
+import authReducer from '../../authSlice';
 
 const store = configureStore({
   reducer: {

@@ -4,7 +4,7 @@ import {
   IsNotEmpty, IsPhoneNumber,
   IsPositive,
   IsString,
-  MaxLength,
+  MaxLength, MinLength,
   ValidateNested
 } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -39,6 +39,7 @@ class DeliveryInfo {
   @ApiProperty({ example: '10001' })
   @IsString()
   @IsNotEmpty()
+  @MinLength(5)
   postalCode: string;
 
   @ApiProperty({ example: '+573118617627' })

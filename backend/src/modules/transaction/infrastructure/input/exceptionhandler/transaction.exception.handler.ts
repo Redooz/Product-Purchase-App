@@ -66,4 +66,18 @@ export class TransactionExceptionHandler {
         throw error;
     }
   }
+
+  handleGetTransactionById(error: Error) {
+    switch (error.constructor.name) {
+      case 'TransactionNotFoundError':
+        throw new NotFoundException(error.message);
+      default:
+        Logger.error(
+          'Unexpected error',
+          error.stack,
+          ProductExceptionHandler.name,
+        );
+        throw error;
+    }
+  }
 }

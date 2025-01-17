@@ -1,14 +1,14 @@
-import { beforeEach, describe, expect, Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, vi } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
-import { transactionApiSlice } from '../transactionApiSlice';
-import pendingLocalTransactionsReducer, { addTransaction } from '../pendingLocalTransactionsSlice';
+import { transactionApiSlice } from '../../transactionApiSlice';
+import pendingLocalTransactionsReducer, { addTransaction } from '../../pendingLocalTransactionsSlice';
 import { render } from '@testing-library/react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { MemoryRouter, useSearchParams } from 'react-router-dom';
 import { ReactElement } from 'react';
-import StartTransaction from './StartTransaction';
+import StartTransaction from '../StartTransaction';
 import { useNavigate } from 'react-router';
-import { StartTransactionRequest } from '../dto/request/startTransactionRequest';
+import { StartTransactionRequest } from '../../dto/request/startTransactionRequest';
 
 vi.mock('react-redux', async () => {
   const actual = await vi.importActual('react-redux');
