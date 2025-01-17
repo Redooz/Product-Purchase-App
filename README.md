@@ -104,10 +104,11 @@ This repository contains the implementation of a Product Purchase System, showca
   - TypeORM for database modeling.
   - Swagger for API documentation.
 - **Frontend**:
-  - Angular for user interface.
+  - React with Redux for user interface.
   - AWS Amplify for deployment.
 - **Deployment**:
   - AWS API Gateway + Load Balancer + ECS + ECR for backend API.
   - AWS Amplify for frontend hosting.
+  - AWS RDS for database hosting.
 
 ---
