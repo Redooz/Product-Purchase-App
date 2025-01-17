@@ -210,6 +210,10 @@ describe('TransactionController', () => {
       total: 100,
       status: 'SUCCESS',
       deliveryFee: 10,
+      product: {
+        name: 'product',
+        quantity: 1,
+      },
     };
 
     jest

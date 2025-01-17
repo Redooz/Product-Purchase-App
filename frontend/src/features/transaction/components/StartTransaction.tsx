@@ -17,6 +17,7 @@ const StartTransaction: React.FC = () => {
   const productId = Number(searchParams.get('productId'));
   const [formData, setFormData] = useState<StartTransactionRequest>({
     productId,
+    quantity: undefined,
     deliveryInfo: {
       personName: '',
       address: '',
@@ -129,7 +130,6 @@ const StartTransaction: React.FC = () => {
           error.data.message.forEach((err: string) => {
             errorMsg += `${err}\n`;
           })
-
           setErrorMessage(errorMsg);
           break;
       }

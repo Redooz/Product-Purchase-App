@@ -200,4 +200,22 @@ export class TransactionUsecase extends TransactionServicePort {
         return Status.PENDING;
     }
   }
+
+  override async getTransactionDetailsById(
+    id: number,
+    customerId: number,
+  ): Promise<OrderTransaction> {
+    const transaction =
+      await this.transactionPersistencePort.getTransactionById(id);
+
+    if (!transaction) {
+      throw new TransactionNotFoundError(id.toString());
+    }
+
+    if (transaction.customer.id !== customerId) {
+      throw new TransactionNotFoundError(id.toString());
+    }
+
+    return transaction;
+  }
 }

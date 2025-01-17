@@ -3,14 +3,14 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
-import { productApiSlice } from '../productApiSlice';
-import ProductList from './ProductList';
-import { GetProductResponse } from '../dto/response/getProductResponse';
-import authReducer from '../../auth/authSlice';
-import pendingLocalTransactionsReducer, { removeTransaction } from '../../transaction/pendingLocalTransactionsSlice';
-import { GetTransactionResponse } from '../../transaction/dto/response/getTransactionResponse';
+import { productApiSlice } from '../../productApiSlice';
+import ProductList from '../ProductList';
+import { GetProductResponse } from '../../dto/response/getProductResponse';
+import authReducer from '../../../auth/authSlice';
+import pendingLocalTransactionsReducer, { removeTransaction } from '../../../transaction/pendingLocalTransactionsSlice';
+import { GetTransactionResponse } from '../../../transaction/dto/response/getTransactionResponse';
 import { useNavigate } from 'react-router';
-import { StartTransactionRequest } from '../../transaction/dto/request/startTransactionRequest';
+import { StartTransactionRequest } from '../../../transaction/dto/request/startTransactionRequest';
 
 vi.mock('react-redux', async () => {
   const actual = await vi.importActual('react-redux');
@@ -31,8 +31,8 @@ vi.mock('react-router', async () => {
 
 // Mock useGetProductsQuery
 const mockUseGetProductsQuery = vi.fn();
-vi.mock('../productApiSlice', async () => {
-  const actual = await vi.importActual('../productApiSlice');
+vi.mock('../../productApiSlice', async () => {
+  const actual = await vi.importActual('../../productApiSlice');
   return {
     ...actual,
     useGetProductsQuery: () => mockUseGetProductsQuery(),
@@ -42,8 +42,8 @@ vi.mock('../productApiSlice', async () => {
 // Mock useGetPendingTransactionsQuery
 const mockUseGetPendingTransactionsQuery = vi.fn();
 const mockUseDeleteTransactionMutation = vi.fn();
-vi.mock('../../transaction/transactionApiSlice', async () => {
-  const actual = await vi.importActual('../../transaction/transactionApiSlice');
+vi.mock('../../../transaction/transactionApiSlice', async () => {
+  const actual = await vi.importActual('../../../transaction/transactionApiSlice');
   return {
     ...actual,
     useGetPendingTransactionsQuery: () => mockUseGetPendingTransactionsQuery(),

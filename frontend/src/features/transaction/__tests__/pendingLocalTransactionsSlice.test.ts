@@ -2,8 +2,8 @@ import { beforeEach, describe } from 'vitest';
 import { configureStore } from '@reduxjs/toolkit';
 import pendingLocalTransactionsReducer, {
   addTransaction, removeTransaction, selectPendingLocalTransactions
-} from './pendingLocalTransactionsSlice';
-import { PendingLocalTransactionsState } from './type/pendingLocalTransactionsState';
+} from '../pendingLocalTransactionsSlice';
+import { PendingLocalTransactionsState } from '../type/pendingLocalTransactionsState';
 
 describe('pendingLocalTransactionsSlice', () => {
   let store: ReturnType<typeof configureStore>;

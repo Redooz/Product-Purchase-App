@@ -111,7 +111,20 @@ const FinishTransaction: React.FC = () => {
       } else {
         navigate('/transaction/failed');
       }
-    } catch (error) {
+    } catch (error: any) {
+      let errorMsg = '';
+
+      switch (error.status) {
+        case 404:
+          setErrorMessage('Product not found.');
+          break;
+        case 400:
+          error.data.message.forEach((err: string) => {
+            errorMsg += `${err}\n`;
+          })
+          setErrorMessage(errorMsg);
+          break;
+      }
       setErrorMessage('Failed to finish transaction. Please try again.');
     }
   };

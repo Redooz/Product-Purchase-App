@@ -25,6 +25,7 @@ import { JwtAuthGuard } from '@/auth/infrastructure/external/guard/jwt.guard';
 import { TransactionExceptionHandler } from '@/transaction/infrastructure/input/exceptionhandler/transaction.exception.handler';
 import { GetTransactionResponse } from '@/transaction/application/dto/response/get.transaction.response';
 import { FinishTransactionRequest } from '@/transaction/application/dto/request/finish.transaction.request';
+import { FinishTransactionResponse } from '@/transaction/application/dto/response/finish.transaction.response';
 
 @ApiTags('transactions')
 @ApiBearerAuth()
@@ -67,7 +68,7 @@ export class TransactionController {
   @ApiResponse({
     status: 201,
     description: 'Transaction finished successfully',
-    type: GetTransactionResponse,
+    type: FinishTransactionResponse,
   })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
@@ -116,6 +117,30 @@ export class TransactionController {
       await this.transactionHandler.deleteTransaction(transactionId, req);
     } catch (error) {
       this.exceptionHandler.handleDeleteTransaction(error);
+    }
+  }
+
+  @Get('/:transactionId')
+  @ApiOperation({ summary: 'Get transaction details by ID' })
+  @ApiParam({ name: 'transactionId', required: true })
+  @ApiResponse({
+    status: 200,
+    description: 'Transaction details',
+    type: FinishTransactionResponse,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  @ApiResponse({ status: 404, description: 'Transaction not found' })
+  async getTransactionById(
+    @Param('transactionId') transactionId: number,
+    @Req() req: Request,
+  ) {
+    try {
+      return await this.transactionHandler.getTransactionDetails(
+        transactionId,
+        req,
+      );
+    } catch (error) {
+      this.exceptionHandler.handleGetTransactionById(error);
     }
   }
 }

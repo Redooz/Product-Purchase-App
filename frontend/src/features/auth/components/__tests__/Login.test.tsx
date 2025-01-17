@@ -4,9 +4,9 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
 import { MemoryRouter } from 'react-router-dom';
-import Login from './Login';
-import { authApiSlice } from '../authApiSlice';
-import authReducer from '../authSlice';
+import Login from '../Login';
+import { authApiSlice } from '../../authApiSlice';
+import authReducer from '../../authSlice';
 import { ReactElement } from 'react';
 
 // Mock useNavigate

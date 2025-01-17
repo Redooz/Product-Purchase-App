@@ -16,5 +16,10 @@ export abstract class TransactionServicePort {
     card: Card,
   ): Promise<OrderTransaction>;
 
-  abstract deleteOrderTransaction(id: number, customerId: number): Promise<void>;
+  abstract deleteOrderTransaction(
+    id: number,
+    customerId: number,
+  ): Promise<void>;
+
+  abstract getTransactionDetailsById(id: number, customerId: number): Promise<OrderTransaction>;
 }
